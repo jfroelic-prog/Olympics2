@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milano Cortina 2026 — Olympic Schedule</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo, useCallback } = React;
+
+
+/* ── Flag emoji from ISO code ── */
+const flag = (c) => {
+  if(!c||c.length<2) return "\u{1F3F3}\uFE0F";
+  return String.fromCodePoint(...[...c.toUpperCase().slice(0,2)].map(ch=>0x1f1e6+ch.charCodeAt(0)-65));
+};
+
+/* ── Sport emoji — each emoji represents the SPORT, not the athlete ── */
+const SE={
+  "Alpine Skiing":"\u26F7\uFE0F",
+  "Biathlon":"\u{1F3BF}",
+  "Bobsleigh":"\u{1F6F7}",
+  "Cross-Country Skiing":"\u{1F3BF}",
+  "Curling":"\u{1F94C}",
+  "Figure Skating":"\u26F8\uFE0F",
+  "Freestyle Skiing":"\u26F7\uFE0F",
+  "Ice Hockey":"\u{1F3D2}",
+  "Luge":"\u{1F6F7}",
+  "Nordic Combined":"\u{1F3BF}",
+  "Short Track Speed Skating":"\u26F8\uFE0F",
+  "Skeleton":"\u{1F6F7}",
+  "Ski Jumping":"\u{1F3BF}",
+  "Ski Mountaineering":"\u26F7\uFE0F",
+  "Snowboard":"\u{1F3C2}",
+  "Speed Skating":"\u26F8\uFE0F",
+  "Ceremonies":"\u{1F386}"
+};
+const ge = s => SE[s]||"\u2744\uFE0F";
+
+/* ── Venues ── */
+const V={am:"Stelvio, Bormio",aw:"Tofane, Cortina",bi:"Anterselva",bo:"Eugenio Monti, Cortina",xc:"Tesero, Val di Fiemme",cu:"Cortina Olympic Centre",fi:"Milano Forum",fr:"Livigno",h1:"Santa Giulia Arena, Milano",h2:"Milano Forum",lu:"Eugenio Monti, Cortina",nc:"Predazzo / Tesero",st:"Milano Forum",sk:"Eugenio Monti, Cortina",sj:"Predazzo",sm:"Livigno",sn:"Livigno",sp:"Fiera Milano",co:"San Siro, Milano",cc:"Verona Arena"};
+
+const CN={US:"United States",CA:"Canada",NO:"Norway",SE:"Sweden",FI:"Finland",DE:"Germany",FR:"France",IT:"Italy",AT:"Austria",CH:"Switzerland",NL:"Netherlands",JP:"Japan",KR:"South Korea",CN:"China",GB:"Great Britain",AU:"Australia",NZ:"New Zealand",CZ:"Czechia",SI:"Slovenia",PL:"Poland",HU:"Hungary",LV:"Latvia",GE:"Georgia",UA:"Ukraine",DK:"Denmark",EE:"Estonia",ES:"Spain",BG:"Bulgaria"};
+
+const HWA=["US","CA","FI","CZ","CH"],HWB=["SE","JP","DE","FR","IT"],HMA=["CA","US","FI","SE","CZ","CH"],HMB=["DE","NO","FR","DK","AT","IT"];
+const CMD=["US","CA","IT","NO","SE","GB","CH","KR","CZ","EE"],CM=["CA","SE","GB","US","NO","IT","CH","JP","DE","CN"],CW=["CA","SE","GB","US","KR","JP","CH","NO","DK","CN"];
+const AL=["AT","CH","IT","NO","FR","DE","US","CA","SE","SI"],BI=["NO","FR","DE","SE","IT","AT","CH","UA","CZ","FI"];
+const XC=["NO","SE","FI","DE","FR","IT","US","CA","AT"],FIG=["US","JP","KR","CA","FR","CN","IT","GE","DE","GB"];
+const FS=["US","CA","CN","FR","CH","AU","JP","SE","NO","GB"],SP=["NL","NO","JP","KR","CA","US","CN","DE","IT","SE"];
+const SH=["KR","CN","NL","CA","IT","US","HU","JP","GB","FR"],LU=["DE","AT","IT","US","LV","CA","FR","GB","NO"];
+const BO=["DE","US","CA","CH","GB","AT","IT","FR","NL","KR"],SK=["DE","GB","CA","US","AT","CH","NL","KR","IT","CN"];
+const SJ=["NO","DE","JP","AT","SI","PL","CH","FI","CZ"],SN=["US","JP","CA","AT","CH","AU","IT","NZ","FR","NO"];
+const SM=["IT","CH","FR","ES","AT","DE","SE","NO"],NC=["NO","DE","AT","JP","FI","FR","US","IT","CZ","SE"];
+
+const mp = cc => cc.map(c=>({code:c,name:CN[c]||c,flag:flag(c)}));
+let _i=0;
+const ev = (d,t,s,ti,v,c,m=false)=>{
+  // Convert CET (UTC+1) to CST (UTC-6) = subtract 7 hours, format 12hr AM/PM
+  const [hh,mm]=t.split(":").map(Number);
+  let h=hh-7,dd=d;
+  if(h<0){h+=24;dd-=1;}
+  const ampm=h>=12?"PM":"AM";
+  const h12=h===0?12:h>12?h-12:h;
+  const ct=`${h12}:${String(mm).padStart(2,"0")} ${ampm}`;
+  // CET original time in 12hr
+  const cetAmpm=hh>=12?"PM":"AM";
+  const cetH12=hh===0?12:hh>12?hh-12:hh;
+  const cetStr=`${cetH12}:${String(mm).padStart(2,"0")} ${cetAmpm}`;
+  return {id:`e${++_i}`,date:`2026-02-${String(dd).padStart(2,"0")}`,time:ct,timeCET:cetStr,sport:s,title:ti,venue:v,participants:mp(c),isMedal:m};
+};
+
+/* ════ FULL SCHEDULE — Feb 4-22, 2026 ════ */
+const AE=[
+/* ═══ Feb 4 — Pre-Opening ═══ */
+ev(4,"14:05","Curling","Mixed Doubles RR Session 1",V.cu,CMD),ev(4,"20:05","Curling","Mixed Doubles RR Session 2",V.cu,CMD),
+/* ═══ Feb 5 — Pre-Opening ═══ */
+ev(5,"09:05","Curling","Mixed Doubles RR Session 3",V.cu,CMD),ev(5,"14:05","Curling","Mixed Doubles RR Session 4",V.cu,CMD),ev(5,"20:05","Curling","Mixed Doubles RR Session 5",V.cu,CMD),
+ev(5,"10:00","Snowboard","Men's Slopestyle Qualification",V.sn,SN),ev(5,"14:00","Snowboard","Women's Slopestyle Qualification",V.sn,SN),
+ev(5,"12:10","Ice Hockey","Women's Prelim — SWE vs JPN",V.h2,["SE","JP"]),ev(5,"16:40","Ice Hockey","Women's Prelim — GER vs FRA",V.h2,["DE","FR"]),
+/* ═══ Feb 6 — Opening Ceremony ═══ */
+ev(6,"09:05","Curling","Mixed Doubles RR Session 6",V.cu,CMD),ev(6,"14:05","Curling","Mixed Doubles RR Session 7",V.cu,CMD),
+ev(6,"12:00","Figure Skating","Team Event — Short Programs",V.fi,FIG),
+ev(6,"12:10","Ice Hockey","Women's Prelim — USA vs FIN",V.h1,["US","FI"]),ev(6,"16:40","Ice Hockey","Women's Prelim — CAN vs CZE",V.h1,["CA","CZ"]),
+ev(6,"20:00","Ceremonies","Opening Ceremony",V.co,["IT"]),
+/* ═══ Feb 7 — Day 1 ═══ */
+ev(7,"09:05","Curling","Mixed Doubles RR Session 8",V.cu,CMD),ev(7,"14:05","Curling","Mixed Doubles RR Session 9",V.cu,CMD),ev(7,"20:05","Curling","Mixed Doubles RR Session 10",V.cu,CMD),
+ev(7,"10:30","Alpine Skiing","Men's Downhill",V.am,AL,true),
+ev(7,"12:00","Cross-Country Skiing","Women's 10+10km Skiathlon",V.xc,XC,true),
+ev(7,"09:30","Freestyle Skiing","Women's Freeski Slopestyle Qual.",V.fr,FS),
+ev(7,"16:00","Ski Jumping","Men's Normal Hill Qualification",V.sj,SJ),
+ev(7,"13:00","Snowboard","Men's Slopestyle Final",V.sn,SN,true),
+ev(7,"18:00","Luge","Men's Singles Runs 1 & 2",V.lu,LU),
+ev(7,"16:00","Speed Skating","Men's 5000m",V.sp,SP,true),
+ev(7,"11:10","Ice Hockey","Women's Group B — GER vs JPN",V.h2,["DE","JP"]),ev(7,"15:40","Ice Hockey","Women's Group B — SWE vs ITA",V.h2,["SE","IT"]),
+ev(7,"12:10","Ice Hockey","Women's Group A — USA vs CHE",V.h1,["US","CH"]),ev(7,"16:40","Ice Hockey","Women's Group A — CAN vs FIN",V.h1,["CA","FI"]),
+/* ═══ Feb 8 — Day 2 ═══ */
+ev(8,"09:05","Curling","Mixed Doubles RR Session 11",V.cu,CMD),ev(8,"14:05","Curling","Mixed Doubles RR Session 12",V.cu,CMD),
+ev(8,"11:00","Alpine Skiing","Women's Downhill",V.aw,AL,true),
+ev(8,"14:30","Biathlon","Mixed Relay 4x6km",V.bi,BI,true),
+ev(8,"12:00","Cross-Country Skiing","Men's 10+10km Skiathlon",V.xc,XC,true),
+ev(8,"16:30","Ski Jumping","Men's Normal Hill Final",V.sj,SJ,true),
+ev(8,"12:00","Figure Skating","Team Event — Free Skate Final",V.fi,FIG,true),
+ev(8,"16:00","Speed Skating","Women's 3000m",V.sp,SP,true),
+ev(8,"13:00","Snowboard","Women's Slopestyle Final",V.sn,SN,true),
+ev(8,"10:00","Freestyle Skiing","Men's Freeski Slopestyle Qual.",V.fr,FS),
+ev(8,"18:00","Luge","Men's Singles Runs 3 & 4",V.lu,LU,true),
+ev(8,"12:10","Ice Hockey","Women's — JPN vs ITA",V.h2,["JP","IT"]),ev(8,"16:40","Ice Hockey","Women's — CHE vs USA",V.h1,["CH","US"]),
+/* ═══ Feb 9 — Day 3 ═══ */
+ev(9,"09:05","Curling","Mixed Doubles RR Session 13",V.cu,CMD),
+ev(9,"18:05","Curling","Mixed Doubles Semifinal 1",V.cu,CMD),ev(9,"18:05","Curling","Mixed Doubles Semifinal 2",V.cu,CMD),
+ev(9,"09:30","Alpine Skiing","Men's Team Combined — Downhill",V.am,AL),ev(9,"13:00","Alpine Skiing","Men's Team Combined — Slalom",V.am,AL,true),
+ev(9,"14:30","Freestyle Skiing","Men's Moguls Qualification",V.fr,FS),
+ev(9,"13:00","Snowboard","Men's Big Air Final",V.sn,SN,true),ev(9,"09:30","Snowboard","Women's Big Air Final",V.sn,SN,true),
+ev(9,"16:00","Ski Jumping","Women's Normal Hill Qualification",V.sj,SJ),
+ev(9,"10:15","Figure Skating","Ice Dance — Rhythm Dance",V.fi,FIG),
+ev(9,"14:00","Speed Skating","Women's 1500m",V.sp,SP,true),
+ev(9,"09:30","Freestyle Skiing","Women's Freeski Slopestyle Final",V.fr,FS,true),
+ev(9,"18:00","Luge","Women's Singles Runs 1 & 2",V.lu,LU),
+ev(9,"12:10","Ice Hockey","Women's — FRA vs SWE",V.h2,["FR","SE"]),ev(9,"16:40","Ice Hockey","Women's — CZE vs CAN",V.h1,["CZ","CA"]),
+ev(9,"12:10","Ice Hockey","Women's — CHE vs FIN",V.h1,["CH","FI"]),ev(9,"16:40","Ice Hockey","Women's — GER vs ITA",V.h2,["DE","IT"]),
+/* ═══ Feb 10 — Day 4 (TODAY) ═══ */
+ev(10,"14:05","Curling","Mixed Doubles Bronze — ITA vs GBR",V.cu,["IT","GB"],true),ev(10,"18:05","Curling","Mixed Doubles Gold — USA vs SWE",V.cu,["US","SE"],true),
+ev(10,"09:05","Curling","Men's Round Robin Session 1",V.cu,CM),
+ev(10,"09:30","Alpine Skiing","Women's Team Combined — Downhill",V.aw,AL),ev(10,"13:30","Alpine Skiing","Women's Team Combined — Slalom",V.aw,AL,true),
+ev(10,"13:30","Biathlon","Men's 20km Individual",V.bi,BI,true),
+ev(10,"08:15","Cross-Country Skiing","Sprint Classic Qualification",V.xc,XC),ev(10,"11:45","Cross-Country Skiing","Men's Sprint Classic Final",V.xc,XC,true),ev(10,"12:15","Cross-Country Skiing","Women's Sprint Classic Final",V.xc,XC,true),
+ev(10,"12:30","Freestyle Skiing","Men's Freeski Slopestyle Final",V.fr,FS,true),
+ev(10,"10:15","Freestyle Skiing","Men's Moguls Qualification 1",V.fr,FS),ev(10,"14:15","Freestyle Skiing","Women's Moguls Qualification 1",V.fr,FS),
+ev(10,"17:30","Ski Jumping","Mixed Team Normal Hill",V.sj,SJ,true),
+ev(10,"17:00","Luge","Women's Singles Runs 3 & 4",V.lu,LU,true),
+ev(10,"09:30","Short Track Speed Skating","Women's 500m Heats",V.st,SH),ev(10,"10:10","Short Track Speed Skating","Men's 1000m Heats",V.st,SH),
+ev(10,"19:00","Short Track Speed Skating","Mixed Team Relay Final",V.st,SH,true),
+ev(10,"18:30","Figure Skating","Men's Short Program",V.fi,FIG),
+ev(10,"11:10","Ice Hockey","Women's Group B — JPN vs SWE",V.h2,["JP","SE"]),ev(10,"16:40","Ice Hockey","Women's Group B — ITA vs GER",V.h2,["IT","DE"]),
+ev(10,"20:10","Ice Hockey","Women's Group A — CAN vs USA",V.h1,["CA","US"]),ev(10,"21:10","Ice Hockey","Women's Group A — FIN vs CHE",V.h1,["FI","CH"]),
+/* ═══ Feb 11 — Day 5 ═══ */
+ev(11,"10:30","Alpine Skiing","Men's Super-G",V.am,AL,true),
+ev(11,"13:15","Biathlon","Women's 15km Individual",V.bi,BI,true),
+ev(11,"12:45","Nordic Combined","Ind. Gundersen NH/10km XC",V.nc,NC,true),
+ev(11,"13:15","Freestyle Skiing","Women's Moguls Final",V.fr,FS,true),
+ev(11,"17:30","Speed Skating","Men's 1000m",V.sp,SP,true),
+ev(11,"19:30","Figure Skating","Ice Dance — Free Dance",V.fi,FIG,true),
+ev(11,"16:00","Luge","Women's Doubles Runs 1 & 2",V.lu,LU,true),ev(11,"16:51","Luge","Men's Doubles Runs 1 & 2",V.lu,LU,true),
+ev(11,"09:30","Snowboard","Women's Halfpipe Qualification",V.sn,SN),
+ev(11,"10:00","Freestyle Skiing","Women's Moguls Qualification 2",V.fr,FS),
+ev(11,"09:00","Skeleton","Women Official Training",V.sk,SK),
+ev(11,"15:40","Ice Hockey","Men's Group B — SVK vs FIN",V.h1,["SK","FI"]),ev(11,"20:10","Ice Hockey","Men's Group C — SWE vs ITA",V.h2,["SE","IT"]),
+ev(11,"18:05","Curling","Men's Round Robin — CZE vs USA",V.cu,["CZ","US"]),ev(11,"18:05","Curling","Men's Round Robin — SWE vs ITA",V.cu,["SE","IT"]),
+ev(11,"18:05","Curling","Men's Round Robin — CAN vs GER",V.cu,["CA","DE"]),ev(11,"18:05","Curling","Men's Round Robin — CHN vs GBR",V.cu,["CN","GB"]),
+/* ═══ Feb 12 — Day 6 ═══ */
+ev(12,"09:05","Curling","Men's Round Robin Session 3",V.cu,CM),ev(12,"14:05","Curling","Women's Round Robin Session 2",V.cu,CW),
+ev(12,"11:00","Alpine Skiing","Women's Super-G",V.aw,AL,true),
+ev(12,"14:30","Biathlon","Men's 10km Sprint",V.bi,BI,true),
+ev(12,"12:00","Cross-Country Skiing","Men's 20km Individual",V.xc,XC,true),
+ev(12,"16:30","Ski Jumping","Men's Large Hill Qualification",V.sj,SJ),
+ev(12,"16:00","Speed Skating","Women's 500m",V.sp,SP,true),
+ev(12,"18:00","Luge","Team Relay",V.lu,LU,true),
+ev(12,"12:30","Freestyle Skiing","Women's Freeski Slopestyle Final",V.fr,FS,true),
+ev(12,"10:00","Skeleton","Men's Runs 3 & 4",V.sk,SK,true),
+ev(12,"19:00","Short Track Speed Skating","Women's 500m Final",V.st,SH,true),
+ev(12,"10:00","Snowboard","Men's Halfpipe Final",V.sn,SN,true),
+ev(12,"10:00","Bobsleigh","Women's Monobob Runs 1 & 2",V.bo,BO),
+ev(12,"12:10","Ice Hockey","Women's Quarterfinals",V.h1,HWA),
+/* ═══ Feb 13 — Day 7 ═══ */
+ev(13,"09:05","Curling","Men's Round Robin Session 4",V.cu,CM),ev(13,"14:05","Curling","Women's Round Robin Session 3",V.cu,CW),
+ev(13,"14:30","Biathlon","Women's 7.5km Sprint",V.bi,BI,true),
+ev(13,"12:00","Cross-Country Skiing","Women's 20km Individual",V.xc,XC,true),
+ev(13,"16:30","Ski Jumping","Men's Large Hill Final",V.sj,SJ,true),
+ev(13,"16:00","Speed Skating","Men's 1500m",V.sp,SP,true),
+ev(13,"10:00","Nordic Combined","Men's Individual Gundersen LH/10km",V.nc,NC,true),
+ev(13,"18:00","Figure Skating","Men's Free Skate",V.fi,FIG,true),
+ev(13,"10:00","Skeleton","Women's Runs 1 & 2",V.sk,SK),
+ev(13,"19:00","Short Track Speed Skating","Men's 1000m Final",V.st,SH,true),
+ev(13,"14:00","Snowboard","Women's Halfpipe Final",V.sn,SN,true),
+ev(13,"10:00","Bobsleigh","Women's Monobob Runs 3 & 4",V.bo,BO,true),
+ev(13,"12:10","Ice Hockey","Men's Prelim — CAN vs USA",V.h1,["CA","US"]),ev(13,"16:40","Ice Hockey","Men's Prelim — SWE vs FIN",V.h1,["SE","FI"]),
+/* ═══ Feb 14 — Day 8 ═══ */
+ev(14,"09:05","Curling","Men's RR Session 5",V.cu,CM),ev(14,"14:05","Curling","Women's RR Session 4",V.cu,CW),
+ev(14,"10:00","Alpine Skiing","Men's Giant Slalom Run 1",V.am,AL),ev(14,"13:30","Alpine Skiing","Men's Giant Slalom Run 2",V.am,AL,true),
+ev(14,"14:30","Biathlon","Men's 12.5km Pursuit",V.bi,BI,true),
+ev(14,"12:00","Cross-Country Skiing","Team Sprint Classic",V.xc,XC,true),
+ev(14,"16:00","Speed Skating","Women's 1000m",V.sp,SP,true),
+ev(14,"16:30","Ski Jumping","Women's Large Hill Qualification",V.sj,SJ),
+ev(14,"10:00","Skeleton","Women's Runs 3 & 4",V.sk,SK,true),
+ev(14,"12:15","Freestyle Skiing","Men's Aerials Qualification",V.fr,FS),
+ev(14,"19:00","Short Track Speed Skating","Women's 1500m Final",V.st,SH,true),
+ev(14,"10:00","Bobsleigh","Two-Man Runs 1 & 2",V.bo,BO),
+ev(14,"12:10","Ice Hockey","Men's Prelim — NOR vs DE",V.h2,["NO","DE"]),ev(14,"16:40","Ice Hockey","Men's Prelim — CZE vs CHE",V.h1,["CZ","CH"]),
+/* ═══ Feb 15 — Day 9 ═══ */
+ev(15,"09:05","Curling","Men's RR Session 6",V.cu,CM),ev(15,"14:05","Curling","Women's RR Session 5",V.cu,CW),
+ev(15,"10:00","Alpine Skiing","Women's Giant Slalom Run 1",V.aw,AL),ev(15,"13:30","Alpine Skiing","Women's Giant Slalom Run 2",V.aw,AL,true),
+ev(15,"14:30","Biathlon","Women's 10km Pursuit",V.bi,BI,true),
+ev(15,"12:00","Cross-Country Skiing","Men's 4x10km Relay",V.xc,XC,true),
+ev(15,"16:00","Speed Skating","Men's 10000m",V.sp,SP,true),
+ev(15,"16:30","Ski Jumping","Women's Large Hill Final",V.sj,SJ,true),
+ev(15,"12:15","Freestyle Skiing","Men's Aerials Final",V.fr,FS,true),
+ev(15,"18:00","Figure Skating","Pairs — Short Program",V.fi,FIG),
+ev(15,"10:00","Skeleton","Mixed Team Event",V.sk,SK,true),
+ev(15,"10:00","Snowboard","Men's Snowboard Cross Seeding",V.sn,SN),
+ev(15,"10:00","Bobsleigh","Two-Man Runs 3 & 4",V.bo,BO,true),
+ev(15,"10:00","Nordic Combined","Women's Individual NH/5km",V.nc,NC,true),
+ev(15,"12:10","Ice Hockey","Men's Prelim — FRA vs DK",V.h2,["FR","DK"]),ev(15,"16:40","Ice Hockey","Men's Prelim — IT vs AT",V.h2,["IT","AT"]),
+ev(15,"19:00","Short Track Speed Skating","Men's 500m Final",V.st,SH,true),
+/* ═══ Feb 16 — Day 10 ═══ */
+ev(16,"09:05","Curling","Men's RR Session 7",V.cu,CM),ev(16,"14:05","Curling","Women's RR Session 6",V.cu,CW),
+ev(16,"10:00","Alpine Skiing","Men's Slalom Run 1",V.am,AL),ev(16,"13:30","Alpine Skiing","Men's Slalom Run 2",V.am,AL,true),
+ev(16,"12:15","Freestyle Skiing","Women's Aerials Final",V.fr,FS,true),ev(16,"14:30","Freestyle Skiing","Men's Ski Cross Finals",V.fr,FS,true),
+ev(16,"18:00","Figure Skating","Pairs — Free Skate",V.fi,FIG,true),
+ev(16,"10:00","Nordic Combined","Men's Team LH/2x7.5km",V.nc,NC,true),
+ev(16,"16:30","Ski Jumping","Men's Team Large Hill",V.sj,SJ,true),
+ev(16,"14:00","Snowboard","Men's Snowboard Cross Finals",V.sn,SN,true),
+ev(16,"10:00","Bobsleigh","Women's Bobsleigh Runs 1 & 2",V.bo,BO),
+ev(16,"19:00","Short Track Speed Skating","Women's 1000m Final",V.st,SH,true),
+ev(16,"12:10","Ice Hockey","Men's Prelim — CAN vs CZE",V.h1,["CA","CZ"]),ev(16,"16:40","Ice Hockey","Men's Prelim — SWE vs CHE",V.h1,["SE","CH"]),
+/* ═══ Feb 17 — Day 11 ═══ */
+ev(17,"09:05","Curling","Men's RR Session 8",V.cu,CM),ev(17,"14:05","Curling","Women's RR Session 7",V.cu,CW),
+ev(17,"14:30","Biathlon","Single Mixed Relay",V.bi,BI,true),
+ev(17,"12:00","Cross-Country Skiing","Women's 4x10km Relay",V.xc,XC,true),
+ev(17,"16:00","Speed Skating","Men's 500m",V.sp,SP,true),
+ev(17,"14:00","Snowboard","Women's Snowboard Cross Finals",V.sn,SN,true),
+ev(17,"12:15","Freestyle Skiing","Women's Ski Cross Finals",V.fr,FS,true),ev(17,"10:00","Freestyle Skiing","Men's Dual Moguls Qualification",V.fr,FS),
+ev(17,"10:00","Bobsleigh","Women's Bobsleigh Runs 3 & 4",V.bo,BO,true),
+ev(17,"18:00","Figure Skating","Women's Short Program",V.fi,FIG),
+ev(17,"12:10","Ice Hockey","Men's Prelim — USA vs FIN",V.h1,["US","FI"]),ev(17,"16:40","Ice Hockey","Men's Prelim — NOR vs IT",V.h2,["NO","IT"]),
+/* ═══ Feb 18 — Day 12 ═══ */
+ev(18,"09:05","Curling","Men's RR Session 9",V.cu,CM),ev(18,"14:05","Curling","Women's RR Session 8",V.cu,CW),
+ev(18,"10:00","Alpine Skiing","Women's Slalom Run 1",V.aw,AL),ev(18,"13:30","Alpine Skiing","Women's Slalom Run 2",V.aw,AL,true),
+ev(18,"14:30","Biathlon","Men's 4x7.5km Relay",V.bi,BI,true),
+ev(18,"12:00","Cross-Country Skiing","Men's 50km Mass Start",V.xc,XC,true),
+ev(18,"16:00","Speed Skating","Women's 5000m",V.sp,SP,true),
+ev(18,"12:15","Freestyle Skiing","Men's Dual Moguls Final",V.fr,FS,true),
+ev(18,"14:00","Snowboard","Mixed Snowboard Cross Finals",V.sn,SN,true),
+ev(18,"10:00","Snowboard","Men's Big Air Qualification",V.sn,SN),
+ev(18,"19:00","Short Track Speed Skating","Men's 5000m Relay Final",V.st,SH,true),
+ev(18,"10:00","Bobsleigh","Four-Man Runs 1 & 2",V.bo,BO),
+ev(18,"12:10","Ice Hockey","Men's Quarterfinals",V.h1,HMA),ev(18,"16:40","Ice Hockey","Women's Semifinals",V.h2,HWA),
+/* ═══ Feb 19 — Day 13 ═══ */
+ev(19,"09:05","Curling","Men's Semifinal",V.cu,CM),ev(19,"14:05","Curling","Women's Semifinal",V.cu,CW),
+ev(19,"14:30","Biathlon","Women's 4x6km Relay",V.bi,BI,true),
+ev(19,"16:00","Speed Skating","Men's Team Pursuit",V.sp,SP,true),
+ev(19,"12:15","Freestyle Skiing","Women's Dual Moguls Final",V.fr,FS,true),
+ev(19,"14:00","Freestyle Skiing","Men's Freeski Halfpipe Final",V.fr,FS,true),
+ev(19,"18:00","Figure Skating","Women's Free Skate",V.fi,FIG,true),
+ev(19,"10:00","Ski Mountaineering","Women's Sprint Qualification",V.sm,SM),ev(19,"14:00","Ski Mountaineering","Women's Sprint Final",V.sm,SM,true),
+ev(19,"10:00","Bobsleigh","Four-Man Runs 3 & 4",V.bo,BO,true),
+ev(19,"12:10","Ice Hockey","Women's Bronze Medal Game",V.h1,HWA,true),ev(19,"16:40","Ice Hockey","Men's Quarterfinals",V.h2,HMB),
+/* ═══ Feb 20 — Day 14 ═══ */
+ev(20,"09:05","Curling","Men's Semifinal",V.cu,CM),ev(20,"14:05","Curling","Women's Semifinal",V.cu,CW),
+ev(20,"14:30","Biathlon","Men's 15km Mass Start",V.bi,BI,true),
+ev(20,"16:00","Speed Skating","Women's Team Pursuit",V.sp,SP,true),
+ev(20,"12:15","Freestyle Skiing","Women's Freeski Halfpipe Final",V.fr,FS,true),
+ev(20,"14:00","Snowboard","Parallel Giant Slalom Qualification",V.sn,SN),
+ev(20,"10:00","Bobsleigh","Women's Bobsleigh Heat (4-woman)",V.bo,BO),
+ev(20,"19:00","Short Track Speed Skating","Women's 3000m Relay Final",V.st,SH,true),ev(20,"20:00","Short Track Speed Skating","Men's 500m Final",V.st,SH,true),
+ev(20,"12:10","Ice Hockey","Women's Gold Medal Game",V.h1,HWA,true),ev(20,"16:40","Ice Hockey","Men's Semifinals",V.h2,HMB),
+/* ═══ Feb 21 — Day 15 ═══ */
+ev(21,"09:05","Curling","Men's Bronze Medal",V.cu,CM,true),ev(21,"14:05","Curling","Women's Bronze Medal",V.cu,CW,true),
+ev(21,"14:30","Biathlon","Women's 12.5km Mass Start",V.bi,BI,true),
+ev(21,"12:00","Cross-Country Skiing","Women's 50km Mass Start",V.xc,XC,true),
+ev(21,"16:00","Speed Skating","Men's Mass Start",V.sp,SP,true),
+ev(21,"12:15","Freestyle Skiing","Men's Ski Cross Finals",V.fr,FS,true),
+ev(21,"14:00","Snowboard","Parallel Giant Slalom Finals",V.sn,SN,true),
+ev(21,"10:00","Ski Mountaineering","Men's Sprint Qualification",V.sm,SM),ev(21,"14:00","Ski Mountaineering","Men's Sprint Final",V.sm,SM,true),
+ev(21,"10:00","Bobsleigh","Women's Bobsleigh Final (4-woman)",V.bo,BO,true),
+ev(21,"19:00","Short Track Speed Skating","Women's Relay Final",V.st,SH,true),
+ev(21,"12:10","Ice Hockey","Men's Bronze Medal Game",V.h1,HMA,true),
+/* ═══ Feb 22 — Closing Day ═══ */
+ev(22,"09:05","Curling","Men's Gold Medal Game",V.cu,CM,true),ev(22,"14:05","Curling","Women's Gold Medal Game",V.cu,CW,true),
+ev(22,"09:00","Cross-Country Skiing","Men's 50km Mass Start",V.xc,XC,true),
+ev(22,"16:00","Speed Skating","Women's Mass Start",V.sp,SP,true),
+ev(22,"10:00","Ski Mountaineering","Mixed Relay",V.sm,SM,true),
+ev(22,"10:00","Bobsleigh","Four-Man Final",V.bo,BO,true),
+ev(22,"12:10","Ice Hockey","Men's Gold Medal Game",V.h1,HMA,true),
+ev(22,"20:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
+];
+const MS=[
+{rank:1,code:"NO",name:"Norway",gold:6,silver:2,bronze:4,total:12},
+{rank:2,code:"CH",name:"Switzerland",gold:4,silver:1,bronze:2,total:7},
+{rank:3,code:"SE",name:"Sweden",gold:3,silver:2,bronze:1,total:6},
+{rank:4,code:"DE",name:"Germany",gold:3,silver:2,bronze:1,total:6},
+{rank:5,code:"AT",name:"Austria",gold:2,silver:3,bronze:0,total:5},
+{rank:6,code:"US",name:"United States",gold:2,silver:4,bronze:2,total:8},
+{rank:7,code:"IT",name:"Italy",gold:2,silver:2,bronze:7,total:11},
+{rank:8,code:"JP",name:"Japan",gold:2,silver:2,bronze:3,total:7},
+{rank:9,code:"FR",name:"France",gold:1,silver:2,bronze:0,total:3},
+{rank:10,code:"CZ",name:"Czechia",gold:1,silver:1,bronze:0,total:2},
+{rank:11,code:"NL",name:"Netherlands",gold:1,silver:1,bronze:0,total:2},
+{rank:12,code:"CA",name:"Canada",gold:0,silver:1,bronze:2,total:3},
+{rank:13,code:"CN",name:"China",gold:0,silver:1,bronze:1,total:2},
+{rank:14,code:"KR",name:"South Korea",gold:0,silver:1,bronze:1,total:2},
+{rank:15,code:"NZ",name:"New Zealand",gold:0,silver:1,bronze:1,total:2},
+{rank:16,code:"LV",name:"Latvia",gold:0,silver:1,bronze:0,total:1},
+{rank:17,code:"PL",name:"Poland",gold:0,silver:1,bronze:0,total:1},
+{rank:18,code:"SI",name:"Slovenia",gold:0,silver:1,bronze:0,total:1},
+{rank:19,code:"BE",name:"Belgium",gold:0,silver:0,bronze:1,total:1},
+{rank:20,code:"GB",name:"Great Britain",gold:0,silver:0,bronze:1,total:1},
+];
+
+const SC={"Alpine Skiing":"#2563eb",Biathlon:"#059669",Bobsleigh:"#92400e","Cross-Country Skiing":"#0284c7",Curling:"#7c3aed","Figure Skating":"#db2777","Freestyle Skiing":"#ea580c","Ice Hockey":"#dc2626",Luge:"#a16207","Nordic Combined":"#0e7490","Short Track Speed Skating":"#4f46e5",Skeleton:"#57534e","Ski Jumping":"#0d9488","Ski Mountaineering":"#16a34a",Snowboard:"#d97706","Speed Skating":"#1d4ed8",Ceremonies:"#b45309"};
+
+const fd = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const fdl = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+
+/* ════ CANVAS HELPERS ════ */
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+function wrapText(ctx,text,mw){const w=text.split(" ");const l=[];let c=w[0]||"";for(let i=1;i<w.length;i++){const t=c+" "+w[i];if(ctx.measureText(t).width<mw)c=t;else{l.push(c);c=w[i];}}l.push(c);return l;}
+function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+
+/* ════ TILE for Schedule Browser ════ */
+const Tile = ({event:ev}) => {
+  const c = SC[ev.sport]||"#64748b";
+  return (
+    <div style={{background:"#fff",borderRadius:12,border:"1px solid #e2e8f0",borderLeft:`4px solid ${c}`,padding:"14px 16px",display:"flex",flexDirection:"column",gap:6,position:"relative",overflow:"hidden"}}>
+      {ev.isMedal && <span style={{position:"absolute",top:8,right:10,fontSize:16}}>{"\u{1F3C5}"}</span>}
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:26}}>{ge(ev.sport)}</span>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:10,fontWeight:700,color:c,textTransform:"uppercase",letterSpacing:"0.06em"}}>{ev.sport}</div>
+          <div style={{fontSize:14,fontWeight:700,color:"#0f172a",lineHeight:1.25}}>{ev.title}</div>
+        </div>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,fontSize:11,color:"#64748b"}}>
+        <span style={{fontWeight:600}}>{"\u{1F552}"} {ev.time} CST</span>
+        <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{"\u{1F4CD}"} {ev.venue}</span>
+      </div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:2}}>
+        {ev.participants.map((p,i)=><span key={i} title={p.name} style={{fontSize:18,lineHeight:1}}>{p.flag}</span>)}
+      </div>
+    </div>
+  );
+};
+
+/* ════ MAIN APP ════ */
+function App() {
+  // Default to today's date, or nearest competition day
+  const todayStr = useMemo(()=>{
+    const t=new Date();
+    const d=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+    const compDates=[...new Set(AE.map(x=>x.date))].sort();
+    if(compDates.includes(d)) return d;
+    // Find nearest future competition day, or last day if past
+    const future=compDates.find(cd=>cd>=d);
+    return future||compDates[compDates.length-1];
+  },[]);
+  const [selDate, setSelDate] = useState(todayStr);
+  const [selSport, setSelSport] = useState("ALL");
+  const [medalOnly, setMedalOnly] = useState(false);
+  const [view, setView] = useState("tv");
+  const [tvPlaying, setTvPlaying] = useState(true);
+  const [tvSlide, setTvSlide] = useState(0);
+  const [tvFading, setTvFading] = useState(false);
+  const [tvSpeed, setTvSpeed] = useState(10);
+  const [tvTransition, setTvTransition] = useState("fade"); // fade, slide-left, slide-right, zoom, flip
+  const [tvTransSpeed, setTvTransSpeed] = useState(0.5); // transition duration in seconds
+  const [tvMedalCount, setTvMedalCount] = useState(5);
+  const tvCanvasRef = React.useRef(null);
+  const tvContainerRef = React.useRef(null);
+  const tvTimerRef = React.useRef(null);
+  const [tvFullscreen, setTvFullscreen] = useState(false);
+  const [exportDate, setExportDate] = useState(todayStr);
+  const [exportType, setExportType] = useState("schedule");
+  const [exporting, setExporting] = useState(false);
+  const [medalRows, setMedalRows] = useState(5);
+  const [tilesPerSlide, setTilesPerSlide] = useState(6);
+  const [slideIdx, setSlideIdx] = useState(0);
+
+
+  const loadSavedMedals = () => {
+    try{const s=localStorage.getItem("olympicMedals2026");if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p;}}catch(e){}
+    return MS.map(m=>({...m}));
+  };
+  const [medals, setMedals] = useState(loadSavedMedals);
+  const [editingMedals, setEditingMedals] = useState(false);
+  const [medalSort, setMedalSort] = useState("total"); // "gold" or "total"
+
+  // Save medals to localStorage whenever they change
+  React.useEffect(()=>{
+    try{localStorage.setItem("olympicMedals2026",JSON.stringify(medals));}catch(e){}
+  },[medals]);
+
+  const sortMedals = (arr) => {
+    const sorted=[...arr];
+    sorted.sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze||(a.name||"").localeCompare(b.name||""));
+    return sorted.map((m,i)=>({...m,total:m.gold+m.silver+m.bronze,rank:i+1}));
+  };
+  const updateMedal = (idx,field,val) => {
+    const n=[...medals];n[idx]={...n[idx],[field]:field==="name"||field==="code"?val:Math.max(0,parseInt(val)||0)};
+    if(field!=="name"&&field!=="code")n[idx].total=n[idx].gold+n[idx].silver+n[idx].bronze;
+    setMedals(sortMedals(n));
+  };
+  const addCountry = () => {
+    setMedals(sortMedals([...medals,{code:"XX",name:"New Country",gold:0,silver:0,bronze:0,total:0,rank:medals.length+1}]));
+  };
+  const removeCountry = (idx) => {
+    const n=medals.filter((_,i)=>i!==idx);
+    setMedals(sortMedals(n));
+  };
+  const resetMedals = () => {setMedals(MS.map(m=>({...m})));setEditingMedals(false);};
+  const sortedMedals = useMemo(()=>{
+    const s=[...medals];
+    if(medalSort==="total") s.sort((a,b)=>b.total-a.total||b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+    else s.sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze||b.total-a.total);
+    return s.map((m,i)=>({...m,rank:i+1}));
+  },[medals,medalSort]);
+  const [dragState, setDragState] = useState({dragging:false,fromIdx:null,overIdx:null});
+  const rowRefs = React.useRef([]);
+  const onGripDown = (e,idx) => {
+    e.preventDefault();
+    setDragState({dragging:true,fromIdx:idx,overIdx:idx});
+    const onMove = (ev) => {
+      const y=ev.clientY||ev.touches?.[0]?.clientY;
+      if(y===undefined) return;
+      let closest=idx;
+      let minDist=Infinity;
+      rowRefs.current.forEach((el,i)=>{
+        if(!el) return;
+        const rect=el.getBoundingClientRect();
+        const mid=rect.top+rect.height/2;
+        const dist=Math.abs(y-mid);
+        if(dist<minDist){minDist=dist;closest=i;}
+      });
+      setDragState(s=>({...s,overIdx:closest}));
+    };
+    const onUp = () => {
+      setDragState(s=>{
+        if(s.fromIdx!==null&&s.overIdx!==null&&s.fromIdx!==s.overIdx){
+          const n=[...medals];
+          const [item]=n.splice(s.fromIdx,1);
+          n.splice(s.overIdx,0,item);
+          setTimeout(()=>setMedals(sortMedals(n)),0);
+        }
+        return {dragging:false,fromIdx:null,overIdx:null};
+      });
+      document.removeEventListener("mousemove",onMove);
+      document.removeEventListener("mouseup",onUp);
+      document.removeEventListener("touchmove",onMove);
+      document.removeEventListener("touchend",onUp);
+    };
+    document.addEventListener("mousemove",onMove);
+    document.addEventListener("mouseup",onUp);
+    document.addEventListener("touchmove",onMove,{passive:false});
+    document.addEventListener("touchend",onUp);
+  };
+  const [exportRes, setExportRes] = useState("1080p");
+  const RES={"720p":[1280,720],"1080p":[1920,1080],"2K":[2560,1440],"4K":[3840,2160]};
+  const [resW,resH]=RES[exportRes];
+
+  const dates = useMemo(()=>[...new Set(AE.map(x=>x.date))].sort(),[]);
+  const sports = useMemo(()=>[...new Set(AE.map(x=>x.sport))].sort(),[]);
+  const epd = useMemo(()=>{const m={};AE.forEach(x=>{m[x.date]=(m[x.date]||0)+1});return m;},[]);
+  const mpd = useMemo(()=>{const m={};AE.filter(x=>x.isMedal).forEach(x=>{m[x.date]=(m[x.date]||0)+1});return m;},[]);
+
+  const filtered = useMemo(()=>AE.filter(x=>{
+    if(x.date!==selDate)return false;if(selSport!=="ALL"&&x.sport!==selSport)return false;if(medalOnly&&!x.isMedal)return false;return true;
+  }).sort((a,b)=>a.time.localeCompare(b.time)),[selDate,selSport,medalOnly]);
+
+  // Paginated slide events
+  const allDayEvents = useMemo(()=>AE.filter(e=>e.date===exportDate).sort((a,b)=>a.time.localeCompare(b.time)),[exportDate]);
+  const totalSlides = Math.max(1,Math.ceil(allDayEvents.length/tilesPerSlide));
+  const clampedSlide = Math.min(slideIdx,totalSlides-1);
+  const slideEvents = allDayEvents.slice(clampedSlide*tilesPerSlide,(clampedSlide+1)*tilesPerSlide);
+
+  /* ════ Compute grid layout for N tiles in 2K (2560×1440) ════ */
+  const getGrid = (n) => {
+    if(n===0) return {cols:1,rows:1,tw:100,th:100,scale:1,W:2560,PAD:50,HH:170,GAP:20,FOOTH:50};
+    const W=2560,PAD=50,HH=170,FOOTH=50,GAP=20;
+    const contentW=W-PAD*2, contentH=1440-HH-FOOTH;
+    // Explicit sensible layouts for landscape slides
+    const L={1:[1,1],2:[2,1],3:[3,1],4:[2,2],5:[3,2],6:[3,2],7:[4,2],8:[4,2],9:[3,3],10:[4,3],11:[4,3],12:[4,3]};
+    const [cols,rowsNeeded]=L[Math.min(n,12)]||[4,3];
+    const rows=Math.max(rowsNeeded,Math.ceil(n/cols));
+    const tw=(contentW-(cols-1)*GAP)/cols;
+    const th=(contentH-(rows-1)*GAP)/rows;
+    const scale=th/600;
+    return {cols,rows,tw,th,scale,W,PAD,HH,GAP,FOOTH};
+  };
+
+  /* ════ Draw a single tile on canvas — TV-readable, fills tile space ════ */
+  const drawTile = (x,ev,tx,ty,tw,th,s) => {
+    const px=tw*0.05;
+    const py=th*0.03;
+    const r=Math.max(8,tw*0.02);
+    x.save();x.globalAlpha=0.3;x.fillStyle="#0a4a56";roundRect(x,tx,ty,tw,th,r);x.fill();x.restore();
+    x.strokeStyle="rgba(255,255,255,0.08)";x.lineWidth=2;roundRect(x,tx,ty,tw,th,r);x.stroke();
+
+    const lx=tx+px, rx=tx+tw-px;
+    const usableW=tw-px*2;
+
+    // ── Sport emoji — 18% of tile height ──
+    const emojiFs=Math.round(th*0.18);
+    x.save();x.globalAlpha=1.0;x.fillStyle="#fff";x.font=`${emojiFs}px system-ui`;
+    x.fillText(ge(ev.sport),lx,ty+py+emojiFs*0.95);x.restore();
+
+    // ── Time badge — top right: CST time ──
+    const badgeH=Math.round(th*0.08);
+    const badgeFs=Math.round(badgeH*0.5);
+    x.font=`bold ${badgeFs}px system-ui`;
+    const timeTxt=ev.time+" CST";
+    const badgeW=x.measureText(timeTxt).width+badgeH*0.8;
+    x.fillStyle="#d0d074";roundRect(x,rx-badgeW,ty+py,badgeW,badgeH,badgeH*0.35);x.fill();
+    x.fillStyle="#00313d";x.fillText(timeTxt,rx-badgeW+badgeH*0.35,ty+py+badgeH*0.7);
+
+    if(ev.isMedal){x.save();x.globalAlpha=1.0;x.fillStyle="#fff";const ms=Math.round(th*0.08);x.font=`${ms}px system-ui`;x.fillText("\u{1F3C5}",rx-badgeW-ms*1.3,ty+py+ms*0.9);x.restore();}
+
+    // ── Title — 14% per line, with sport name above ──
+    const sportFs=Math.round(th*0.08);
+    const sportY=ty+py+emojiFs+sportFs*1.0;
+    x.fillStyle="rgba(208,208,116,0.85)";x.font=`bold ${sportFs}px system-ui`;
+    x.fillText(ev.sport.toUpperCase(),lx,sportY);
+
+    const titleFs=Math.round(th*0.12);
+    x.fillStyle="#fff";x.font=`bold ${titleFs}px system-ui`;
+    const tl=wrapText(x,ev.title,usableW);
+    const titleY=sportY+titleFs*0.85;
+    tl.forEach((l,li)=>{if(li<2)x.fillText(l,lx,titleY+li*titleFs*1.1);});
+
+    // ── Venue — 5.5%, only if ≤5 participants ──
+    let venueBottomY=titleY+Math.min(tl.length,2)*titleFs*1.1;
+    if(ev.participants.length<=5){
+      const venueFs=Math.round(th*0.055);
+      venueBottomY=titleY+Math.min(tl.length,2)*titleFs*1.1+titleFs*0.3;
+      x.fillStyle="rgba(208,208,116,0.7)";x.font=`${venueFs}px system-ui`;
+      x.fillText("\u{2299} "+ev.venue.toUpperCase(),lx,venueBottomY);
+    }
+
+    // ── Flags — 18% each, anchored to bottom, FULL OPACITY ──
+    const flagFs=Math.round(th*0.18);
+    const flagGap=flagFs*1.05;
+    const perRow=Math.max(1,Math.floor(usableW/flagGap));
+    const total=ev.participants.length;
+    const bottomPad=py*2;
+    const row1Base=ty+th-bottomPad;
+    const hasRow2=total>perRow;
+    const topRowBase=hasRow2?row1Base-flagFs*1.15:row1Base;
+
+    x.save();x.globalAlpha=1.0;x.fillStyle="#fff";
+    x.font=`${flagFs}px system-ui`;
+    const r1=Math.min(total,perRow);
+    for(let fi=0;fi<r1;fi++) x.fillText(ev.participants[fi].flag,lx+fi*flagGap,topRowBase);
+    if(hasRow2){
+      const r2=Math.min(total-perRow,perRow);
+      for(let fi=0;fi<r2;fi++) x.fillText(ev.participants[perRow+fi].flag,lx+fi*flagGap,row1Base);
+      if(total>perRow+r2){
+        x.fillStyle="rgba(255,255,255,0.5)";x.font=`bold ${Math.round(th*0.05)}px system-ui`;
+        x.fillText(`+${total-perRow-r2}`,lx+r2*flagGap,row1Base-flagFs*0.15);
+      }
+    }
+    x.restore();
+  };
+
+  /* ════ Draw header on canvas ════ */
+  const drawHeader = (x,W,HH,PAD,titleText,subtitleText,slideInfo) => {
+    const g=x.createLinearGradient(0,0,W,1440);g.addColorStop(0,"#00313d");g.addColorStop(0.6,"#024a5e");g.addColorStop(1,"#035c6e");
+    x.fillStyle=g;x.fillRect(0,0,W,1440);
+    x.save();x.globalAlpha=0.06;x.fillStyle="#d0d074";x.beginPath();x.arc(W*0.82,-60,500,0,Math.PI*2);x.fill();x.restore();
+    // "Daily Summary" — italic bold
+    x.fillStyle="#d0d074";x.font="italic bold 42px system-ui";x.fillText(titleText,PAD,55);
+    // Date — huge bold
+    x.fillStyle="#d0d074";x.font="bold 90px system-ui";x.fillText(subtitleText,PAD,145);
+    // Branding right
+    x.fillStyle="rgba(255,255,255,0.85)";x.font="bold 36px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,55);
+    x.fillStyle="rgba(208,208,116,0.7)";x.font="300 20px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,82);
+    // Part badge top-right if slideInfo provided
+    if(slideInfo){
+      x.font="bold 18px system-ui";
+      const tw=x.measureText(slideInfo).width+30;
+      x.strokeStyle="rgba(208,208,116,0.5)";x.lineWidth=2;roundRect(x,W-PAD-tw,10,tw,32,16);x.stroke();
+      x.fillStyle="rgba(208,208,116,0.8)";x.fillText(slideInfo,W-PAD-tw/2,32);
+    }
+    x.textAlign="left";
+    x.fillStyle="rgba(255,255,255,0.3)";x.font="18px system-ui";
+  };
+
+  /* ════ CANVAS PNG EXPORT — Schedule ════ */
+  const exportSchedulePNG = useCallback(async () => {
+    setExporting(true);
+    await new Promise(r=>setTimeout(r,50));
+    const events=slideEvents;
+    if(!events.length){setExporting(false);return;}
+    const n=events.length;
+    const {cols,rows,tw,th,scale:s,W,PAD,HH,GAP,FOOTH}=getGrid(n);
+    const LW=2560,LH=1440; // logical coords
+    const sx=resW/LW,sy=resH/LH; // scale to output resolution
+    const c=document.createElement("canvas");c.width=resW;c.height=resH;
+    const x=c.getContext("2d");x.scale(sx,sy);
+    drawHeader(x,W,HH,PAD,"Daily Summary",fdl(exportDate),totalSlides>1?`Part ${clampedSlide+1} / ${totalSlides}`:null);
+    // Slide counter
+    const mc=allDayEvents.filter(e=>e.isMedal).length;
+    x.fillStyle="rgba(255,255,255,0.3)";x.font="14px system-ui";
+    x.fillText(`${allDayEvents.length} events \u2022 ${mc} medal events \u2022 Slide ${clampedSlide+1}/${totalSlides}`,PAD,HH-14);
+    // Tiles — fill entire content area
+    const contentW=W-PAD*2,contentH=1440-HH-FOOTH;
+    const gridW=cols*tw+(cols-1)*GAP;
+    const gridH=rows*th+(rows-1)*GAP;
+    const ox=PAD+(contentW-gridW)/2;
+    const oy=HH+(contentH-gridH)/2;
+    events.forEach((ev,i)=>{
+      const col=i%cols,row=Math.floor(i/cols);
+      drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
+    });
+    // Footer
+    x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,1440-18);x.textAlign="left";
+    try{c.toBlob(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`olympic-${exportDate}-slide${clampedSlide+1}.png`;a.click();URL.revokeObjectURL(u);setExporting(false);},"image/png");}catch(e){setExporting(false);alert("Export failed — try right-clicking the preview.");}
+  },[exportDate,slideEvents,clampedSlide,totalSlides,allDayEvents,resW,resH]);
+
+  /* ════ CANVAS PNG EXPORT — Medals (2K, fills space) ════ */
+  const exportMedalsPNG = useCallback(async () => {
+    setExporting(true);
+    await new Promise(r=>setTimeout(r,50));
+    const data=sortedMedals.slice(0,medalRows);
+    const n=data.length;
+    const W=2560,H=1440,PAD=60,FOOTH=40;
+    const sx=resW/W,sy=resH/H;
+    const c=document.createElement("canvas");c.width=resW;c.height=resH;
+    const x=c.getContext("2d");x.scale(sx,sy);
+    // Compact header — single band
+    const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#00313d");g.addColorStop(0.6,"#024a5e");g.addColorStop(1,"#035c6e");
+    x.fillStyle=g;x.fillRect(0,0,W,H);
+    x.save();x.globalAlpha=0.06;x.fillStyle="#d0d074";x.beginPath();x.arc(W*0.82,-60,500,0,Math.PI*2);x.fill();x.restore();
+    // Title line: "MEDAL COUNT" small + "Top N Standings" large, same baseline area
+    x.fillStyle="rgba(255,255,255,0.5)";x.font="bold 22px system-ui";x.fillText("MEDAL COUNT",PAD,38);
+    x.fillStyle="#d0d074";x.font="bold 50px system-ui";x.fillText(`Top ${n} Standings`,PAD,90);
+    x.fillStyle="rgba(255,255,255,0.7)";x.font="bold 20px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,40);
+    x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
+    // Divider
+    const divY=108;
+    x.strokeStyle="rgba(208,208,116,0.3)";x.lineWidth=2;x.beginPath();x.moveTo(PAD,divY);x.lineTo(W-PAD,divY);x.stroke();
+    // Rows start right after divider — no column labels
+    const bodyTop=divY+12;
+    const bodyH=H-FOOTH-bodyTop;
+    const RGAP=Math.max(4,Math.min(14,bodyH*0.012));
+    const RH=(bodyH-Math.max(0,n-1)*RGAP)/n;
+    const rowW=W-PAD*2;
+    const pf=(pct,floor)=>Math.round(Math.max(floor,RH*pct));
+    // Column positions
+    const cRank=PAD+rowW*0.04;
+    const cFlag=PAD+rowW*0.1;
+    const cName=PAD+rowW*0.17;
+    const cGold=PAD+rowW*0.58;
+    const cSilver=PAD+rowW*0.71;
+    const cBronze=PAD+rowW*0.84;
+    const cTotal=PAD+rowW*0.95;
+    // Draw rows
+    data.forEach((s,i)=>{
+      const ry=bodyTop+i*(RH+RGAP);
+      const cy=ry+RH*0.58;
+      const rad=Math.min(18,RH*0.12);
+      x.save();x.globalAlpha=0.35;x.fillStyle="#00313d";roundRect(x,PAD,ry,rowW,RH,rad);x.fill();x.restore();
+      x.strokeStyle="rgba(255,255,255,0.06)";x.lineWidth=1;roundRect(x,PAD,ry,rowW,RH,rad);x.stroke();
+      // Rank
+      x.fillStyle="rgba(255,255,255,0.1)";x.font=`italic bold ${pf(0.55,16)}px system-ui`;x.textAlign="center";
+      x.fillText(String(s.rank),cRank,cy);
+      // Flag — full opacity
+      x.save();x.globalAlpha=1.0;x.fillStyle="#fff";x.font=`${pf(0.5,16)}px system-ui`;x.fillText(flag(s.code),cFlag,cy);x.restore();
+      // Country
+      x.fillStyle="#fff";x.font=`bold ${pf(0.4,14)}px system-ui`;x.textAlign="left";x.fillText(s.name,cName,cy);
+      // Medal counts with emojis — no labels
+      const mF=pf(0.45,14),eF=pf(0.3,12);
+      x.textAlign="center";
+      x.font=`${eF}px system-ui`;x.fillText("\u{1F947}",cGold-mF*0.7,cy);
+      x.fillStyle="#FFD700";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.gold),cGold+mF*0.25,cy);
+      x.font=`${eF}px system-ui`;x.fillText("\u{1F948}",cSilver-mF*0.7,cy);
+      x.fillStyle="#C0C0C0";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.silver),cSilver+mF*0.25,cy);
+      x.font=`${eF}px system-ui`;x.fillText("\u{1F949}",cBronze-mF*0.7,cy);
+      x.fillStyle="#CD7F32";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.bronze),cBronze+mF*0.25,cy);
+      // Total box
+      const tF=pf(0.48,16);
+      const bw=Math.max(50,tF*1.8),bh=RH*0.68;
+      x.fillStyle="rgba(208,208,116,0.15)";roundRect(x,cTotal-bw/2,ry+(RH-bh)/2,bw,bh,Math.min(14,RH*0.1));x.fill();
+      x.strokeStyle="rgba(208,208,116,0.3)";roundRect(x,cTotal-bw/2,ry+(RH-bh)/2,bw,bh,Math.min(14,RH*0.1));x.stroke();
+      x.fillStyle="#fff";x.font=`bold ${tF}px system-ui`;x.fillText(String(s.total),cTotal,cy);
+      x.textAlign="left";
+    });
+    x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.olympics.com",W/2,H-16);
+    try{c.toBlob(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`olympic-medal-standings-top${medalRows}.png`;a.click();URL.revokeObjectURL(u);setExporting(false);},"image/png");}catch(e){setExporting(false);alert("Export failed — try right-clicking the preview.");}
+  },[medalRows,resW,resH]);
+
+  /* ════ Export ALL slides for selected day as ZIP ════ */
+  const exportAllSlides = useCallback(async () => {
+    setExporting(true);
+    await new Promise(r=>setTimeout(r,50));
+    // Dynamically load JSZip
+    if(!window.JSZip){
+      const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+      document.head.appendChild(s);
+      await new Promise((res,rej)=>{s.onload=res;s.onerror=rej;});
+    }
+    const zip=new window.JSZip();
+    const allEvs=AE.filter(e=>e.date===exportDate).sort((a,b)=>a.time.localeCompare(b.time));
+    const nSlides=Math.max(1,Math.ceil(allEvs.length/tilesPerSlide));
+    for(let si=0;si<nSlides;si++){
+      const sevs=allEvs.slice(si*tilesPerSlide,(si+1)*tilesPerSlide);
+      const n=sevs.length;
+      const {cols,rows,tw,th,scale:s,W,PAD,HH,GAP,FOOTH}=getGrid(n);
+      const LW=2560,LH=1440;
+      const sx=resW/LW,sy=resH/LH;
+      const c=document.createElement("canvas");c.width=resW;c.height=resH;
+      const x=c.getContext("2d");x.scale(sx,sy);
+      drawHeader(x,W,HH,PAD,"Daily Summary",fdl(exportDate),nSlides>1?`Part ${si+1} / ${nSlides}`:null);
+      const mc=allEvs.filter(e=>e.isMedal).length;
+      x.fillStyle="rgba(255,255,255,0.3)";x.font="14px system-ui";
+      x.fillText(`${allEvs.length} events \u2022 ${mc} medal events \u2022 Slide ${si+1}/${nSlides}`,PAD,HH-14);
+      const contentW=W-PAD*2,contentH=1440-HH-FOOTH;
+      const gridW=cols*tw+(cols-1)*GAP,gridH=rows*th+(rows-1)*GAP;
+      const ox=PAD+(contentW-gridW)/2,oy=HH+(contentH-gridH)/2;
+      sevs.forEach((ev,i)=>{
+        const col=i%cols,row=Math.floor(i/cols);
+        drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
+      });
+      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,1440-18);x.textAlign="left";
+      const blob=await new Promise(res=>c.toBlob(res,"image/png"));
+      zip.file(`olympic-${exportDate}-slide${si+1}.png`,blob);
+    }
+    const content=await zip.generateAsync({type:"blob"});
+    const u=URL.createObjectURL(content);const a=document.createElement("a");a.href=u;a.download=`olympic-${exportDate}-all-slides.zip`;a.click();URL.revokeObjectURL(u);
+    setExporting(false);
+  },[exportDate,tilesPerSlide,resW,resH]);
+
+  /* ════ CUSTOM SLIDES — base64 images baked in by Claude ════ */
+  const CUSTOM_SLIDES = [
+    // Add custom slides here as: { src: "data:image/png;base64,...", label: "Slide Title" }
+  ];
+
+  /* ════ TV MODE — auto-cycling fullscreen slideshow ════ */
+  const todayEvents = useMemo(()=>AE.filter(e=>e.date===todayStr).sort((a,b)=>a.time.localeCompare(b.time)),[todayStr]);
+  const tvScheduleSlideCount = Math.max(1,Math.ceil(todayEvents.length/6));
+  const tvMedalSlideCount = 1;
+  const tvCustomSlideCount = CUSTOM_SLIDES.length;
+  const tvTotalSlides = tvScheduleSlideCount + tvMedalSlideCount + tvCustomSlideCount;
+
+  const renderTvSlide = React.useCallback((slideIndex) => {
+    const canvas = tvCanvasRef.current;
+    if(!canvas) return;
+    const W=2560,H=1440;
+    canvas.width=W;canvas.height=H;
+    const x=canvas.getContext("2d");
+
+    // Which slide type?
+    if(slideIndex < tvScheduleSlideCount) {
+      // SCHEDULE SLIDE
+      const si=slideIndex;
+      const evs=todayEvents.slice(si*6,(si+1)*6);
+      if(!evs.length) return;
+      const n=evs.length;
+      const {cols,rows,tw,th,scale:s,PAD,HH,GAP,FOOTH}=getGrid(n);
+      drawHeader(x,W,HH,PAD,"Daily Summary",fdl(todayStr),tvScheduleSlideCount>1?`Part ${si+1} / ${tvScheduleSlideCount}`:null);
+      const mc=todayEvents.filter(e=>e.isMedal).length;
+      x.fillStyle="rgba(255,255,255,0.3)";x.font="14px system-ui";
+      x.fillText(`${todayEvents.length} events \u2022 ${mc} medal events \u2022 Slide ${si+1}/${tvScheduleSlideCount}`,PAD,HH-14);
+      const contentW=W-PAD*2,contentH=H-HH-FOOTH;
+      const gridW=cols*tw+(cols-1)*GAP;
+      const gridH=rows*th+(rows-1)*GAP;
+      const ox=PAD+(contentW-gridW)/2;
+      const oy=HH+(contentH-gridH)/2;
+      evs.forEach((ev,i)=>{
+        const col=i%cols,row=Math.floor(i/cols);
+        drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
+      });
+      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,H-18);x.textAlign="left";
+    } else if(slideIndex < tvScheduleSlideCount + tvMedalSlideCount) {
+      // MEDAL SLIDE
+      const data=sortedMedals.slice(0,Math.min(sortedMedals.length,tvMedalCount));
+      const n=data.length;
+      const PAD=60,FOOTH=40;
+      const g2=x.createLinearGradient(0,0,W,H);g2.addColorStop(0,"#00313d");g2.addColorStop(0.6,"#024a5e");g2.addColorStop(1,"#035c6e");
+      x.fillStyle=g2;x.fillRect(0,0,W,H);
+      x.save();x.globalAlpha=0.06;x.fillStyle="#d0d074";x.beginPath();x.arc(W*0.82,-60,500,0,Math.PI*2);x.fill();x.restore();
+      x.fillStyle="rgba(255,255,255,0.5)";x.font="bold 22px system-ui";x.fillText("MEDAL COUNT",PAD,38);
+      x.fillStyle="#d0d074";x.font="bold 50px system-ui";x.fillText(`Top ${n} Standings`,PAD,90);
+      x.fillStyle="rgba(255,255,255,0.7)";x.font="bold 20px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,40);
+      x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
+      const divY=108;
+      x.strokeStyle="rgba(208,208,116,0.3)";x.lineWidth=2;x.beginPath();x.moveTo(PAD,divY);x.lineTo(W-PAD,divY);x.stroke();
+      const bodyTop=divY+12;
+      const bodyH=H-FOOTH-bodyTop;
+      const RGAP=Math.max(4,Math.min(14,bodyH*0.012));
+      const RH=(bodyH-Math.max(0,n-1)*RGAP)/n;
+      const rowW=W-PAD*2;
+      const pf=(pct,floor)=>Math.round(Math.max(floor,RH*pct));
+      const cRank=PAD+rowW*0.04,cFlag=PAD+rowW*0.1,cName=PAD+rowW*0.17;
+      const cGold=PAD+rowW*0.58,cSilver=PAD+rowW*0.71,cBronze=PAD+rowW*0.84,cTotal=PAD+rowW*0.95;
+      data.forEach((s,i)=>{
+        const ry=bodyTop+i*(RH+RGAP);
+        const cy=ry+RH*0.58;
+        const rad=Math.min(18,RH*0.12);
+        x.save();x.globalAlpha=0.35;x.fillStyle="#00313d";roundRect(x,PAD,ry,rowW,RH,rad);x.fill();x.restore();
+        x.strokeStyle="rgba(255,255,255,0.06)";x.lineWidth=1;roundRect(x,PAD,ry,rowW,RH,rad);x.stroke();
+        x.fillStyle="rgba(255,255,255,0.1)";x.font=`italic bold ${pf(0.55,16)}px system-ui`;x.textAlign="center";
+        x.fillText(String(s.rank),cRank,cy);
+        x.save();x.globalAlpha=1.0;x.fillStyle="#fff";x.font=`${pf(0.5,16)}px system-ui`;x.fillText(flag(s.code),cFlag,cy);x.restore();
+        x.fillStyle="#fff";x.font=`bold ${pf(0.4,14)}px system-ui`;x.textAlign="left";x.fillText(s.name,cName,cy);
+        const mF=pf(0.45,14),eF=pf(0.3,12);
+        x.textAlign="center";
+        x.font=`${eF}px system-ui`;x.fillText("\u{1F947}",cGold-mF*0.7,cy);
+        x.fillStyle="#FFD700";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.gold),cGold+mF*0.25,cy);
+        x.font=`${eF}px system-ui`;x.fillText("\u{1F948}",cSilver-mF*0.7,cy);
+        x.fillStyle="#C0C0C0";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.silver),cSilver+mF*0.25,cy);
+        x.font=`${eF}px system-ui`;x.fillText("\u{1F949}",cBronze-mF*0.7,cy);
+        x.fillStyle="#CD7F32";x.font=`bold ${mF}px system-ui`;x.fillText(String(s.bronze),cBronze+mF*0.25,cy);
+        const tF=pf(0.48,16);
+        const bw=Math.max(50,tF*1.8),bh=RH*0.68;
+        x.fillStyle="rgba(208,208,116,0.15)";roundRect(x,cTotal-bw/2,ry+(RH-bh)/2,bw,bh,Math.min(14,RH*0.1));x.fill();
+        x.strokeStyle="rgba(208,208,116,0.3)";roundRect(x,cTotal-bw/2,ry+(RH-bh)/2,bw,bh,Math.min(14,RH*0.1));x.stroke();
+        x.fillStyle="#fff";x.font=`bold ${tF}px system-ui`;x.fillText(String(s.total),cTotal,cy);
+        x.textAlign="left";
+      });
+      x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.olympics.com",W/2,H-16);
+    } else {
+      // CUSTOM SLIDE — draw baked-in image
+      const ci = slideIndex - tvScheduleSlideCount - tvMedalSlideCount;
+      const cs = CUSTOM_SLIDES[ci];
+      if(cs){
+        const img = new Image();
+        img.onload = () => {
+          // Fill background
+          const g3=x.createLinearGradient(0,0,W,H);g3.addColorStop(0,"#00313d");g3.addColorStop(1,"#024a5e");
+          x.fillStyle=g3;x.fillRect(0,0,W,H);
+          // Fit image centered
+          const scale=Math.min(W/img.width,H/img.height);
+          const iw=img.width*scale,ih=img.height*scale;
+          x.drawImage(img,(W-iw)/2,(H-ih)/2,iw,ih);
+        };
+        img.src=cs.src;
+      }
+    }
+  },[todayEvents,todayStr,tvScheduleSlideCount,sortedMedals,tvMedalCount]);
+
+  // Advance slide with transition
+  const advanceTvSlide = React.useCallback((dir=1)=>{
+    setTvFading(true);
+    const ms = tvTransSpeed * 1000;
+    setTimeout(()=>{
+      setTvSlide(prev=>(prev+dir+tvTotalSlides)%tvTotalSlides);
+      setTimeout(()=>setTvFading(false),50);
+    },ms);
+  },[tvTotalSlides,tvTransSpeed]);
+
+  // TV auto-cycle effect
+  React.useEffect(()=>{
+    if(view==="tv"){
+      renderTvSlide(tvSlide);
+    }
+  },[view,tvSlide,renderTvSlide]);
+
+  React.useEffect(()=>{
+    if(view==="tv"&&tvPlaying){
+      tvTimerRef.current=setInterval(()=>{
+        advanceTvSlide(1);
+      },tvSpeed*1000);
+      return ()=>clearInterval(tvTimerRef.current);
+    }
+    return ()=>{if(tvTimerRef.current)clearInterval(tvTimerRef.current);};
+  },[view,tvPlaying,tvSpeed,advanceTvSlide]);
+
+  // Start playing when entering TV mode
+  React.useEffect(()=>{if(view==="tv"){setTvPlaying(true);setTvSlide(0);setTvFading(false);}},[view]);
+
+  // Fullscreen toggle
+  const toggleFullscreen = async () => {
+    // If already in native fullscreen, exit
+    if(document.fullscreenElement||document.webkitFullscreenElement){
+      try{document.exitFullscreen?.();document.webkitExitFullscreen?.();}catch(e){}
+      return;
+    }
+    // If in CSS fullscreen mode, exit
+    if(tvFullscreen){ setTvFullscreen(false); return; }
+    // Try native fullscreen first
+    const el = tvContainerRef.current;
+    if(el){
+      try{
+        await (el.requestFullscreen?.() || el.webkitRequestFullscreen?.());
+        return; // success — event listener handles state
+      } catch(e){
+        // Native fullscreen blocked — use CSS fullscreen
+        setTvFullscreen(true);
+      }
+    }
+  };
+  React.useEffect(()=>{
+    const handler=()=>{
+      const isFs = !!(document.fullscreenElement||document.webkitFullscreenElement);
+      setTvFullscreen(isFs);
+    };
+    document.addEventListener("fullscreenchange",handler);
+    document.addEventListener("webkitfullscreenchange",handler);
+    return ()=>{document.removeEventListener("fullscreenchange",handler);document.removeEventListener("webkitfullscreenchange",handler);};
+  },[]);
+  // Escape key exits CSS fullscreen
+  React.useEffect(()=>{
+    const handler=(e)=>{if(e.key==="Escape"&&tvFullscreen)setTvFullscreen(false);};
+    document.addEventListener("keydown",handler);
+    return ()=>document.removeEventListener("keydown",handler);
+  },[tvFullscreen]);
+
+  // Auto-fullscreen after 30s of no interaction
+  const autoFsTimerRef = React.useRef(null);
+  const resetAutoFs = React.useCallback(()=>{
+    if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
+    autoFsTimerRef.current = setTimeout(()=>{
+      if(!tvFullscreen && view==="tv") setTvFullscreen(true);
+    }, 30000);
+  },[tvFullscreen, view]);
+  React.useEffect(()=>{
+    if(view==="tv" && !tvFullscreen){
+      resetAutoFs();
+      const events=["click","touchstart","mousemove","keydown","scroll"];
+      events.forEach(e=>document.addEventListener(e,resetAutoFs,{passive:true}));
+      return ()=>{
+        if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
+        events.forEach(e=>document.removeEventListener(e,resetAutoFs));
+      };
+    }
+  },[view,tvFullscreen,resetAutoFs]);
+
+  // Auto-reload page every 30 minutes to pick up updates
+  React.useEffect(()=>{
+    const reloadTimer = setTimeout(()=>{
+      // Exit fullscreen first
+      setTvFullscreen(false);
+      if(document.fullscreenElement||document.webkitFullscreenElement){
+        try{document.exitFullscreen?.();}catch(e){}
+        try{document.webkitExitFullscreen?.();}catch(e){}
+      }
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      // Wait for fullscreen exit, then reload
+      setTimeout(()=>{
+        window.location.reload();
+      }, 1000);
+    }, 30*60*1000);
+    return ()=>clearTimeout(reloadTimer);
+  },[]);
+
+  const ts=(a)=>({padding:"8px 16px",borderRadius:8,border:"none",cursor:"pointer",fontSize:13,fontWeight:700,background:a?"#fff":"transparent",color:a?"#00313d":"rgba(255,255,255,0.65)",transition:"all 0.15s",whiteSpace:"nowrap"});
+
+  return (
+    <div style={{minHeight:"100vh",background:"#f1f5f9",fontFamily:"system-ui,-apple-system,'Segoe UI',sans-serif"}}>
+      <header style={{background:"linear-gradient(135deg,#00313d 0%,#024a5e 60%,#035c6e 100%)",color:"#fff",padding:"20px 24px",position:"sticky",top:0,zIndex:50,boxShadow:"0 4px 20px rgba(0,49,61,0.35)"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontSize:28}}>{"\u2744\uFE0F"}</span>
+            <div><div style={{fontSize:20,fontWeight:900}}>MILANO CORTINA 2026</div>
+            <div style={{fontSize:11,color:"#d0d074",fontWeight:700,letterSpacing:"0.12em"}}>OLYMPIC WINTER GAMES &bull; {AE.length} SESSIONS</div></div>
+          </div>
+          <div style={{display:"flex",gap:3,background:"rgba(255,255,255,0.1)",borderRadius:10,padding:3}}>
+            <button onClick={()=>setView("tv")} style={ts(view==="tv")}>{"\u{1F4FA}"} TV Mode</button>
+            <button onClick={()=>setView("schedule")} style={ts(view==="schedule")}>{"\u{1F4C5}"} Schedule</button>
+            <button onClick={()=>setView("medals")} style={ts(view==="medals")}>{"\u{1F3C5}"} Medals</button>
+            <button onClick={()=>setView("export")} style={ts(view==="export")}>{"\u{1F4F8}"} Export PNG</button>
+          </div>
+        </div>
+      </header>
+      <div style={{maxWidth:1100,margin:"0 auto",padding:"20px 12px"}}>
+
+        {/* ══ SCHEDULE ══ */}
+        {/* ══ TV MODE ══ */}
+        {view==="tv"&&(<div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10,flexWrap:"wrap"}}>
+            <h2 style={{fontSize:22,fontWeight:900,margin:0}}>{"\u{1F4FA}"} TV Slideshow</h2>
+            <span style={{fontSize:12,color:"#64748b",fontWeight:600}}>{tvScheduleSlideCount} schedule + {tvMedalSlideCount} medal + {tvCustomSlideCount} custom = {tvTotalSlides} slides</span>
+          </div>
+          {/* Row 1: Playback controls */}
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+            <button onClick={()=>setTvPlaying(!tvPlaying)} style={{padding:"6px 16px",borderRadius:8,border:"1px solid #cbd5e1",background:tvPlaying?"#fef3c7":"#f0fdf4",cursor:"pointer",fontSize:12,fontWeight:700,color:tvPlaying?"#92400e":"#16a34a"}}>
+              {tvPlaying?"\u{23F8}\uFE0F Pause":"\u{25B6}\uFE0F Play"}
+            </button>
+            <button onClick={()=>advanceTvSlide(-1)} style={{padding:"6px 12px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",cursor:"pointer",fontSize:12,fontWeight:700,color:"#475569"}}>{"\u{25C0}"} Prev</button>
+            <button onClick={()=>advanceTvSlide(1)} style={{padding:"6px 12px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",cursor:"pointer",fontSize:12,fontWeight:700,color:"#475569"}}>Next {"\u{25B6}"}</button>
+            <button onClick={toggleFullscreen} style={{padding:"6px 16px",borderRadius:8,border:"1px solid #7c3aed",background:tvFullscreen?"#ede9fe":"#f5f3ff",cursor:"pointer",fontSize:12,fontWeight:700,color:"#7c3aed",marginLeft:"auto"}}>
+              {tvFullscreen?"\u{1F5D5} Exit Fullscreen":"\u{1F5D6} Fullscreen"}
+            </button>
+          </div>
+          {/* Row 2: Settings */}
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10,flexWrap:"wrap",padding:"8px 12px",background:"#f8fafc",borderRadius:10,border:"1px solid #e2e8f0"}}>
+            <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:4}}>
+              {"\u{23F1}\uFE0F"} Slide Duration:
+              <select value={tvSpeed} onChange={e=>setTvSpeed(Number(e.target.value))} style={{padding:"4px 8px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+                <option value={5}>5s</option><option value={8}>8s</option><option value={10}>10s</option><option value={12}>12s</option><option value={15}>15s</option><option value={20}>20s</option><option value={30}>30s</option>
+              </select>
+            </label>
+            <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:4}}>
+              {"\u{2728}"} Transition:
+              <select value={tvTransition} onChange={e=>setTvTransition(e.target.value)} style={{padding:"4px 8px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+                <option value="fade">Fade</option><option value="slide-left">Slide Left</option><option value="slide-right">Slide Right</option><option value="slide-up">Slide Up</option><option value="zoom">Zoom</option><option value="flip">Flip</option>
+              </select>
+            </label>
+            <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:4}}>
+              {"\u{1F3AC}"} Trans. Speed:
+              <select value={tvTransSpeed} onChange={e=>setTvTransSpeed(Number(e.target.value))} style={{padding:"4px 8px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+                <option value={0.3}>Fast (0.3s)</option><option value={0.5}>Normal (0.5s)</option><option value={0.8}>Slow (0.8s)</option><option value={1.2}>Very Slow (1.2s)</option>
+              </select>
+            </label>
+            <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:4}}>
+              {"\u{1F3C5}"} Medal Count:
+              <select value={tvMedalCount} onChange={e=>setTvMedalCount(Number(e.target.value))} style={{padding:"4px 8px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+                <option value={3}>Top 3</option><option value={5}>Top 5</option><option value={8}>Top 8</option><option value={10}>Top 10</option><option value={12}>Top 12</option><option value={15}>Top 15</option>
+              </select>
+            </label>
+          </div>
+          <div style={{fontSize:12,color:"#64748b",marginBottom:6,fontWeight:600}}>
+            Slide {tvSlide+1} of {tvTotalSlides} {"\u2022"} {tvSlide<tvScheduleSlideCount?"Schedule":tvSlide<tvScheduleSlideCount+tvMedalSlideCount?"Medal Standings":"Custom Slide"} {"\u2022"} {tvPlaying?`Auto-cycling every ${tvSpeed}s`:"Paused"}
+          </div>
+          <div ref={tvContainerRef} style={{background:"#000",overflow:"hidden",
+            ...(tvFullscreen?{position:"fixed",top:0,left:0,right:0,bottom:0,width:"100vw",height:"100vh",zIndex:2147483647,borderRadius:0,margin:0,padding:0}:{aspectRatio:"16/9",width:"100%",position:"relative",borderRadius:12})
+          }}>
+            {tvFullscreen&&<style dangerouslySetInnerHTML={{__html:"html,body{overflow:hidden !important;}"}}/>}
+            <canvas ref={tvCanvasRef} style={{width:"100%",height:"100%",display:"block",
+              transition:`all ${tvTransSpeed}s ease-in-out`,
+              opacity:tvTransition==="fade"?(tvFading?0:1):1,
+              transform:tvTransition==="slide-left"?(tvFading?"translateX(-100%)":"translateX(0)"):
+                tvTransition==="slide-right"?(tvFading?"translateX(100%)":"translateX(0)"):
+                tvTransition==="zoom"?(tvFading?"scale(0.3)":"scale(1)"):
+                tvTransition==="flip"?(tvFading?"rotateY(90deg)":"rotateY(0deg)"):
+                tvTransition==="slide-up"?(tvFading?"translateY(-100%)":"translateY(0)"):
+                "none",
+              ...(tvTransition==="fade"?{}:{opacity:tvFading?0:1})
+            }}/>
+            {tvFullscreen&&<div style={{position:"absolute",bottom:16,right:16,display:"flex",gap:6,opacity:0.7}}>
+              <button onClick={()=>advanceTvSlide(-1)} style={{padding:"8px 16px",borderRadius:8,background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>{"\u{25C0}"}</button>
+              <button onClick={()=>setTvPlaying(!tvPlaying)} style={{padding:"8px 16px",borderRadius:8,background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>{tvPlaying?"\u{23F8}":"\u{25B6}"}</button>
+              <button onClick={()=>advanceTvSlide(1)} style={{padding:"8px 16px",borderRadius:8,background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>{"\u{25B6}"}</button>
+              <button onClick={toggleFullscreen} style={{padding:"8px 16px",borderRadius:8,background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>{"\u{1F5D5}"}</button>
+            </div>}
+            {/* Progress dots */}
+            <div style={{position:"absolute",bottom:tvFullscreen?56:8,left:"50%",transform:"translateX(-50%)",display:"flex",gap:6}}>
+              {Array.from({length:tvTotalSlides},(_,i)=>(
+                <div key={i} onClick={()=>{setTvFading(true);setTimeout(()=>{setTvSlide(i);setTimeout(()=>setTvFading(false),50);},tvTransSpeed*1000);}} style={{width:tvTotalSlides>15?8:10,height:tvTotalSlides>15?8:10,borderRadius:"50%",background:i===tvSlide?"#d0d074":"rgba(255,255,255,0.3)",border:i===tvSlide?"2px solid #fff":"2px solid transparent",cursor:"pointer",transition:"all 0.3s"}}/>
+              ))}
+            </div>
+          </div>
+          <p style={{fontSize:12,color:"#94a3b8",marginTop:8}}>Embed this page on Google Sites for a self-running TV display. Click {"\u{1F5D6}"} Fullscreen for kiosk mode.</p>
+        </div>)}
+
+        {/* ══ SCHEDULE ══ */}
+        {view==="schedule"&&(<>
+          <div style={{display:"flex",gap:5,overflowX:"auto",paddingBottom:8,marginBottom:16}}>
+            {dates.map(d=>{const day=parseInt(d.split("-")[2]),sel=d===selDate,today=d===todayStr;
+              return(<button key={d} onClick={()=>setSelDate(d)} style={{minWidth:62,padding:"6px 4px",borderRadius:10,border:sel?"2px solid #024a5e":"2px solid transparent",background:sel?"#024a5e":"#fff",color:sel?"#fff":"#475569",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:1,position:"relative",boxShadow:sel?"0 3px 10px rgba(2,74,94,0.25)":"0 1px 3px rgba(0,0,0,0.06)"}}>
+                {today&&<div style={{position:"absolute",top:-7,fontSize:7,background:"#ef4444",color:"#fff",padding:"1px 5px",borderRadius:5,fontWeight:800}}>TODAY</div>}
+                <span style={{fontSize:9,fontWeight:700,opacity:0.55}}>{fd(d).split(",")[0]}</span>
+                <span style={{fontSize:17,fontWeight:900}}>{day}</span>
+                <span style={{fontSize:8,fontWeight:700,color:sel?"#d0d074":"#94a3b8"}}>{epd[d]||0}</span>
+                {(mpd[d]||0)>0&&<span style={{fontSize:8}}>{"\u{1F3C5}"}{mpd[d]}</span>}
+              </button>);
+            })}
+          </div>
+          <div style={{display:"flex",gap:10,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
+            <select value={selSport} onChange={e=>setSelSport(e.target.value)} style={{padding:"7px 10px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",fontSize:13,fontWeight:600}}>
+              <option value="ALL">All Sports</option>
+              {sports.map(s=><option key={s} value={s}>{ge(s)} {s}</option>)}
+            </select>
+            <label style={{display:"flex",alignItems:"center",gap:5,fontSize:13,fontWeight:600,cursor:"pointer",padding:"7px 10px",background:medalOnly?"#fef3c7":"#fff",borderRadius:8,border:`1px solid ${medalOnly?"#fbbf24":"#cbd5e1"}`}}>
+              <input type="checkbox" checked={medalOnly} onChange={e=>setMedalOnly(e.target.checked)} />{"\u{1F3C5}"} Medal Only
+            </label>
+            <span style={{fontSize:13,fontWeight:700,color:"#64748b",marginLeft:"auto"}}>{filtered.length} events</span>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:10}}>
+            {filtered.map(e=><Tile key={e.id} event={e}/>)}
+          </div>
+          {filtered.length===0&&<div style={{textAlign:"center",padding:48,color:"#94a3b8",fontWeight:600}}>No events match.</div>}
+        </>)}
+
+        {/* ══ MEDALS ══ */}
+        {view==="medals"&&(<div>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:4,flexWrap:"wrap"}}>
+            <h2 style={{fontSize:22,fontWeight:900,margin:0}}>{"\u{1F3C5}"} Medal Standings</h2>
+            <div style={{display:"flex",gap:3,background:"#f1f5f9",borderRadius:8,padding:3}}>
+              <button onClick={()=>setMedalSort("gold")} style={{padding:"4px 12px",borderRadius:6,border:"none",cursor:"pointer",fontSize:12,fontWeight:700,background:medalSort==="gold"?"#ca8a04":"transparent",color:medalSort==="gold"?"#fff":"#64748b"}}>{"\u{1F947}"} By Gold</button>
+              <button onClick={()=>setMedalSort("total")} style={{padding:"4px 12px",borderRadius:6,border:"none",cursor:"pointer",fontSize:12,fontWeight:700,background:medalSort==="total"?"#024a5e":"transparent",color:medalSort==="total"?"#fff":"#64748b"}}>By Total</button>
+            </div>
+            <button onClick={()=>{if(!editingMedals){setMedals(sortedMedals);}setEditingMedals(!editingMedals);}} style={{padding:"5px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:editingMedals?"#fef3c7":"#fff",cursor:"pointer",fontSize:12,fontWeight:700,color:editingMedals?"#92400e":"#475569"}}>
+              {editingMedals?"\u{2705} Done Editing":"\u{270F}\uFE0F Edit Medals"}
+            </button>
+            {editingMedals&&<button onClick={resetMedals} style={{padding:"5px 14px",borderRadius:8,border:"1px solid #fca5a5",background:"#fef2f2",cursor:"pointer",fontSize:12,fontWeight:700,color:"#dc2626"}}>
+              {"\u{21A9}\uFE0F"} Reset to Default
+            </button>}
+          </div>
+          <p style={{color:"#64748b",marginBottom:16,fontSize:13}}>{editingMedals?<span>Click any field to edit. Drag ☰ to reorder. <strong>Changes save automatically!</strong> <br/><strong>Country codes:</strong> US, CA, GB, DE, FR, IT, NO, SE, JP, KR, CN, AU, NZ, CH=Switzerland, AT=Austria, CZ=Czechia, NL=Netherlands, SI=Slovenia, FI=Finland, PL=Poland, BG=Bulgaria, ES=Spain, DK=Denmark, BE=Belgium</span>:"Edits save automatically between visits"}</p>
+          <div style={{background:"#fff",borderRadius:14,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.06)"}}>
+            <div style={{display:"grid",gridTemplateColumns:editingMedals?"36px 32px 58px 1fr 54px 54px 54px 56px 32px":"44px 1fr 60px 60px 60px 70px",padding:"12px 16px",background:"#024a5e",color:"#fff",fontWeight:800,fontSize:11,textTransform:"uppercase"}}>
+              {editingMedals&&<span></span>}<span>#</span>{editingMedals&&<span>Code</span>}<span>Country</span><span style={{textAlign:"center"}}>{"\u{1F947}"}</span><span style={{textAlign:"center"}}>{"\u{1F948}"}</span><span style={{textAlign:"center"}}>{"\u{1F949}"}</span><span style={{textAlign:"center"}}>Total</span>{editingMedals&&<span></span>}
+            </div>
+            {(editingMedals?medals:sortedMedals).map((s,i)=>editingMedals?(
+              <div key={s.code+i} ref={el=>rowRefs.current[i]=el} style={{display:"grid",gridTemplateColumns:"36px 32px 58px 1fr 54px 54px 54px 56px 32px",padding:"6px 12px",alignItems:"center",background:dragState.overIdx===i&&dragState.dragging?"#dbeafe":dragState.fromIdx===i&&dragState.dragging?"#fef9c3":i%2===0?"#f8fafc":"#fff",borderBottom:"1px solid #f1f5f9",gap:4,transition:"background 0.1s",borderLeft:dragState.overIdx===i&&dragState.dragging?"3px solid #2563eb":"3px solid transparent"}}>
+                <div onMouseDown={e=>onGripDown(e,i)} onTouchStart={e=>onGripDown(e,i)} style={{cursor:"grab",fontSize:20,color:"#94a3b8",userSelect:"none",display:"flex",alignItems:"center",justifyContent:"center",padding:"4px 0",touchAction:"none"}}>{"\u2630"}</div>
+                <span style={{fontWeight:900,color:"#94a3b8",fontSize:13,textAlign:"center"}}>{s.rank}</span>
+                <input value={s.code} onChange={e=>updateMedal(i,"code",e.target.value.toUpperCase().slice(0,2))} style={{width:"100%",padding:"4px 4px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:12,fontWeight:700,textAlign:"center"}} />
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{fontSize:18}}>{flag(s.code)}</span>
+                  <input value={s.name} onChange={e=>updateMedal(i,"name",e.target.value)} style={{flex:1,padding:"4px 8px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:13,fontWeight:600,minWidth:0}} />
+                </div>
+                <input type="number" min="0" value={s.gold} onChange={e=>updateMedal(i,"gold",e.target.value)} style={{width:"100%",padding:"4px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:14,fontWeight:800,textAlign:"center",color:"#ca8a04"}} />
+                <input type="number" min="0" value={s.silver} onChange={e=>updateMedal(i,"silver",e.target.value)} style={{width:"100%",padding:"4px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:14,fontWeight:800,textAlign:"center",color:"#71717a"}} />
+                <input type="number" min="0" value={s.bronze} onChange={e=>updateMedal(i,"bronze",e.target.value)} style={{width:"100%",padding:"4px",borderRadius:6,border:"1px solid #cbd5e1",fontSize:14,fontWeight:800,textAlign:"center",color:"#b45309"}} />
+                <span style={{textAlign:"center",fontWeight:900,fontSize:14,background:"#024a5e",color:"#fff",borderRadius:7,padding:"4px 0"}}>{s.total}</span>
+                <button onClick={()=>removeCountry(i)} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:"#ef4444",padding:0}} title="Remove">{"\u{274C}"}</button>
+              </div>
+            ):(
+              <div key={s.code+i} style={{display:"grid",gridTemplateColumns:"44px 1fr 60px 60px 60px 70px",padding:"12px 16px",alignItems:"center",background:i%2===0?"#f8fafc":"#fff",borderBottom:"1px solid #f1f5f9"}}>
+              <span style={{fontWeight:900,color:i<3?"#d97706":"#94a3b8",fontSize:15}}>{s.rank}</span>
+              <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:22}}>{flag(s.code)}</span><div><div style={{fontWeight:700,fontSize:13}}>{s.name}</div><div style={{fontSize:10,color:"#94a3b8"}}>{s.code}</div></div></div>
+              <span style={{textAlign:"center",fontWeight:800,fontSize:16,color:"#ca8a04"}}>{s.gold}</span>
+              <span style={{textAlign:"center",fontWeight:800,fontSize:16,color:"#71717a"}}>{s.silver}</span>
+              <span style={{textAlign:"center",fontWeight:800,fontSize:16,color:"#b45309"}}>{s.bronze}</span>
+              <span style={{textAlign:"center",fontWeight:900,fontSize:16,background:"#024a5e",color:"#fff",borderRadius:7,padding:"3px 0"}}>{s.total}</span>
+            </div>))}
+            {editingMedals&&(
+              <div style={{padding:12,textAlign:"center",borderTop:"1px solid #e2e8f0"}}>
+                <button onClick={addCountry} style={{padding:"8px 20px",borderRadius:8,border:"1px dashed #cbd5e1",background:"#f8fafc",cursor:"pointer",fontSize:13,fontWeight:700,color:"#475569"}}>
+                  {"\u{2795}"} Add Country
+                </button>
+              </div>
+            )}
+          </div>
+        </div>)}
+
+        {/* ══ EXPORT ══ */}
+        {view==="export"&&(<div>
+          <h2 style={{fontSize:22,fontWeight:900,marginBottom:4}}>{"\u{1F4F8}"} Export PNG</h2>
+          <p style={{color:"#64748b",marginBottom:16,fontSize:13}}>Generate PNG images for your school display board.</p>
+          <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center",background:"#fff",padding:12,borderRadius:12,border:"1px solid #e2e8f0"}}>
+            <div style={{display:"flex",gap:3,background:"#f1f5f9",borderRadius:8,padding:3}}>
+              <button onClick={()=>{setExportType("schedule");setSlideIdx(0);}} style={{padding:"6px 14px",borderRadius:6,border:"none",cursor:"pointer",fontSize:12,fontWeight:700,background:exportType==="schedule"?"#024a5e":"transparent",color:exportType==="schedule"?"#fff":"#64748b"}}>{"\u{1F4C5}"} Schedule</button>
+              <button onClick={()=>{setExportType("medals");setSlideIdx(0);}} style={{padding:"6px 14px",borderRadius:6,border:"none",cursor:"pointer",fontSize:12,fontWeight:700,background:exportType==="medals"?"#024a5e":"transparent",color:exportType==="medals"?"#fff":"#64748b"}}>{"\u{1F3C5}"} Medals</button>
+            </div>
+            <select value={exportRes} onChange={e=>setExportRes(e.target.value)} style={{padding:"6px 10px",borderRadius:8,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+              {Object.keys(RES).map(r=><option key={r} value={r}>{r} ({RES[r][0]}×{RES[r][1]})</option>)}
+            </select>
+            {exportType==="schedule"&&(<>
+              <select value={exportDate} onChange={e=>{setExportDate(e.target.value);setSlideIdx(0);}} style={{padding:"6px 10px",borderRadius:8,border:"1px solid #cbd5e1",fontSize:12,fontWeight:600}}>
+                {dates.map(d=><option key={d} value={d}>{fdl(d)} ({epd[d]} events)</option>)}
+              </select>
+              <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:6}}>
+                Tiles/slide: <input type="range" min={1} max={12} value={tilesPerSlide} onChange={e=>{setTilesPerSlide(+e.target.value);setSlideIdx(0);}} style={{width:100}} />
+                <span style={{fontWeight:800,minWidth:18}}>{tilesPerSlide}</span>
+              </label>
+            </>)}
+            {exportType==="medals"&&(
+              <label style={{fontSize:12,fontWeight:600,color:"#475569",display:"flex",alignItems:"center",gap:6}}>
+                Top: <input type="range" min={3} max={16} value={medalRows} onChange={e=>setMedalRows(+e.target.value)} style={{width:80}} />
+                <span style={{fontWeight:800,width:20}}>{medalRows}</span>
+              </label>
+            )}
+            <button onClick={exportType==="schedule"?exportSchedulePNG:exportMedalsPNG} disabled={exporting} style={{padding:"8px 20px",borderRadius:8,border:"none",background:exporting?"#94a3b8":"#024a5e",color:"#fff",fontSize:13,fontWeight:700,cursor:exporting?"not-allowed":"pointer",marginLeft:"auto",boxShadow:"0 3px 10px rgba(2,74,94,0.3)"}}>
+              {exporting?"\u23F3 Generating...":`\u2B07\uFE0F Download PNG (${exportRes})`}
+            </button>
+            {exportType==="schedule"&&totalSlides>1&&(
+              <button onClick={exportAllSlides} disabled={exporting} style={{padding:"8px 20px",borderRadius:8,border:"none",background:exporting?"#94a3b8":"#d0d074",color:"#00313d",fontSize:13,fontWeight:700,cursor:exporting?"not-allowed":"pointer",boxShadow:"0 3px 10px rgba(208,208,116,0.3)"}}>
+                {exporting?"\u23F3 Generating...":`\u{1F4E6} Download All ${totalSlides} Slides (ZIP)`}
+              </button>
+            )}
+          </div>
+          {/* Pagination for schedule */}
+          {exportType==="schedule"&&totalSlides>1&&(
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:12}}>
+              <button onClick={()=>setSlideIdx(Math.max(0,clampedSlide-1))} disabled={clampedSlide===0} style={{padding:"5px 12px",borderRadius:6,border:"1px solid #cbd5e1",background:"#fff",cursor:"pointer",fontWeight:700,fontSize:14,opacity:clampedSlide===0?0.3:1}}>{"\u25C0"}</button>
+              <span style={{fontSize:13,fontWeight:700,color:"#475569"}}>Slide {clampedSlide+1} of {totalSlides} &bull; {allDayEvents.length} total events</span>
+              <button onClick={()=>setSlideIdx(Math.min(totalSlides-1,clampedSlide+1))} disabled={clampedSlide>=totalSlides-1} style={{padding:"5px 12px",borderRadius:6,border:"1px solid #cbd5e1",background:"#fff",cursor:"pointer",fontWeight:700,fontSize:14,opacity:clampedSlide>=totalSlides-1?0.3:1}}>{"\u25B6"}</button>
+            </div>
+          )}
+          {/* Preview (16:9 aspect) */}
+          <div style={{maxWidth:900,margin:"0 auto",aspectRatio:"16/9",background:"linear-gradient(135deg,#00313d,#024a5e,#035c6e)",borderRadius:14,padding:"3%",color:"#fff",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(0,0,0,0.3)",display:"flex",flexDirection:"column"}}>
+            <div style={{position:"absolute",top:"-15%",right:"-8%",width:"40%",height:"40%",background:"radial-gradient(circle,rgba(208,208,116,0.07) 0%,transparent 70%)",borderRadius:"50%"}} />
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",borderBottom:"2px solid rgba(208,208,116,0.3)",paddingBottom:"1.2%",marginBottom:"1.2%"}}>
+              <div>
+                <div style={{fontSize:"clamp(8px,1vw,13px)",fontWeight:600,opacity:0.5,textTransform:"uppercase",letterSpacing:"0.1em"}}>{exportType==="schedule"?"Daily Summary":"Medal Count"}</div>
+                <div style={{fontSize:"clamp(14px,2.4vw,28px)",fontWeight:800,color:"#d0d074"}}>{exportType==="schedule"?fdl(exportDate):`Top ${medalRows} Standings`}</div>
+              </div>
+              <div style={{textAlign:"right"}}><div style={{fontSize:"clamp(8px,1vw,13px)",fontWeight:800,letterSpacing:"0.12em",opacity:0.7}}>MILANO CORTINA</div><div style={{fontSize:"clamp(7px,0.7vw,10px)",color:"#d0d074",fontWeight:600}}>OLYMPIC WINTER GAMES 2026</div></div>
+            </div>
+            {exportType==="schedule"&&(()=>{
+              const n=slideEvents.length;
+              if(!n) return <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,0.3)",fontSize:16}}>No events for this day</div>;
+              // Mirror the canvas getGrid layout
+              const L={1:[1,1],2:[2,1],3:[3,1],4:[2,2],5:[3,2],6:[3,2],7:[4,2],8:[4,2],9:[3,3],10:[4,3],11:[4,3],12:[4,3]};
+              const [cols,rowsNeeded]=L[Math.min(n,12)]||[4,3];
+              const rows=Math.max(rowsNeeded,Math.ceil(n/cols));
+              return (
+                <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gridTemplateRows:`repeat(${rows},1fr)`,gap:"1.2%",flex:1,minHeight:0}}>
+                  {slideEvents.map(e=>{
+                    const sc=SC[e.sport]||"#64748b";
+                    // Scale text with tile count — fewer tiles = bigger text
+                    const tScale=n<=2?1.8:n<=4?1.4:n<=6?1.1:n<=8?0.9:0.75;
+                    return (
+                      <div key={e.id} style={{background:"rgba(0,49,61,0.5)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,padding:`${2.5*tScale}%`,display:"flex",flexDirection:"column",gap:`${1*tScale}%`,position:"relative",overflow:"hidden",minHeight:0}}>
+                        <div style={{position:"absolute",left:0,top:"4%",bottom:"4%",width:Math.max(3,4*tScale),background:"rgba(208,208,116,0.5)",borderRadius:"0 4px 4px 0"}} />
+                        {e.isMedal&&<span style={{position:"absolute",top:`${2*tScale}%`,right:`${2*tScale}%`,fontSize:`${12*tScale}px`}}>{"\u{1F3C5}"}</span>}
+                        <div style={{display:"flex",alignItems:"center",gap:`${3*tScale}%`,paddingLeft:`${2*tScale}%`}}>
+                          <span style={{fontSize:`${24*tScale}px`,lineHeight:1}}>{ge(e.sport)}</span>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontSize:`${9*tScale}px`,fontWeight:700,color:"rgba(208,208,116,0.9)",textTransform:"uppercase",letterSpacing:"0.06em"}}>{e.sport}</div>
+                            <div style={{fontSize:`${14*tScale}px`,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:tScale<1?"nowrap":"normal",lineHeight:1.25}}>{e.title}</div>
+                          </div>
+                        </div>
+                        <div style={{display:"flex",alignItems:"center",gap:`${3*tScale}%`,paddingLeft:`${2*tScale}%`}}>
+                          <span style={{background:"#d0d074",color:"#00313d",fontWeight:800,fontSize:`${9*tScale}px`,padding:`${1.5*tScale}px ${5*tScale}px`,borderRadius:5,whiteSpace:"nowrap"}}>{e.time} CST</span>
+                          <span style={{fontSize:`${8*tScale}px`,color:"rgba(208,208,116,0.6)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{"\u{1F4CD}"} {e.venue}</span>
+                        </div>
+                        <div style={{borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:`${1.5*tScale}%`,marginTop:"auto",paddingLeft:`${2*tScale}%`,display:"flex",gap:`${1.5*tScale}%`,flexWrap:"wrap",alignContent:"flex-start"}}>
+                          {e.participants.map((p,i)=><span key={i} style={{fontSize:`${26*tScale}px`,lineHeight:1.3}}>{p.flag}</span>)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+            {exportType==="medals"&&(()=>{
+              const n=medalRows;
+              const ms=Math.min(2.4,8/n);
+              return (
+                <div style={{display:"flex",flexDirection:"column",gap:`${0.8*ms}%`,flex:1,minHeight:0}}>
+                  {sortedMedals.slice(0,medalRows).map(s=>(
+                    <div key={s.code} style={{display:"flex",alignItems:"center",background:"rgba(0,49,61,0.45)",borderRadius:Math.max(6,10*ms),padding:`${1.2*ms}% 3%`,gap:`${1.5*ms}%`,flex:1,minHeight:0}}>
+                      <span style={{fontSize:`${20*ms}px`,fontWeight:900,color:"rgba(255,255,255,0.12)",fontStyle:"italic",width:"4%",textAlign:"center"}}>{s.rank}</span>
+                      <span style={{fontSize:`${22*ms}px`,width:"5%",textAlign:"center"}}>{flag(s.code)}</span>
+                      <span style={{flex:1,fontSize:`${14*ms}px`,fontWeight:700}}>{s.name}</span>
+                      <span style={{width:"10%",textAlign:"center"}}><span style={{fontSize:`${10*ms}px`}}>{"\u{1F947}"}</span> <span style={{fontSize:`${16*ms}px`,fontWeight:800,color:"#FFD700"}}>{s.gold}</span></span>
+                      <span style={{width:"10%",textAlign:"center"}}><span style={{fontSize:`${10*ms}px`}}>{"\u{1F948}"}</span> <span style={{fontSize:`${16*ms}px`,fontWeight:800,color:"#C0C0C0"}}>{s.silver}</span></span>
+                      <span style={{width:"10%",textAlign:"center"}}><span style={{fontSize:`${10*ms}px`}}>{"\u{1F949}"}</span> <span style={{fontSize:`${16*ms}px`,fontWeight:800,color:"#CD7F32"}}>{s.bronze}</span></span>
+                      <span style={{width:"8%",textAlign:"center",fontSize:`${16*ms}px`,fontWeight:900,color:"#fff",background:"rgba(208,208,116,0.15)",borderRadius:Math.max(4,6*ms),padding:`${0.5*ms}% 0`}}>{s.total}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+            <div style={{position:"absolute",bottom:"1.5%",left:0,right:0,textAlign:"center",fontSize:"clamp(6px,0.6vw,10px)",color:"rgba(255,255,255,0.2)",letterSpacing:"0.12em",fontWeight:600}}>milanocortina2026.olympics.com</div>
+          </div>
+        </div>)}
+      </div>
+      <footer style={{textAlign:"center",padding:"32px 16px",color:"#94a3b8",fontSize:12}}>Milano Cortina 2026 &bull; {AE.length} sessions &bull; {AE.filter(x=>x.isMedal).length} medal events</footer>
+    </div>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
