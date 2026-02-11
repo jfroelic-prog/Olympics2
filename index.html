@@ -828,47 +828,37 @@ function App() {
     return ()=>document.removeEventListener("keydown",handler);
   },[tvFullscreen]);
 
-  // Auto native browser fullscreen after 10s of no interaction (requires chrome://flags fullscreen-popup-windows enabled)
-  const autoFsTimerRef = React.useRef(null);
-  const requestNativeFs = React.useCallback(()=>{
-    const el = document.documentElement;
-    try{
-      if(el.requestFullscreen) el.requestFullscreen();
-      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    }catch(e){}
-    // Also enable CSS fullscreen for the TV overlay
-    if(!tvFullscreen && view==="tv") setTvFullscreen(true);
-  },[tvFullscreen, view]);
-  const resetAutoFs = React.useCallback(()=>{
-    if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
-    autoFsTimerRef.current = setTimeout(()=>{
-      requestNativeFs();
-    }, 10000);
-  },[requestNativeFs]);
+  // Auto native browser fullscreen on load when in TV mode
+  // Uses chrome://flags #fullscreen-popup-windows and #system-keyboard-lock
+  const hasTriedFs = React.useRef(false);
   React.useEffect(()=>{
-    if(view==="tv"){
-      // Try native fullscreen immediately on load (may work with chrome flags)
-      setTimeout(()=>{
-        if(!document.fullscreenElement && !document.webkitFullscreenElement){
-          requestNativeFs();
-        }
-      }, 3000);
-      resetAutoFs();
-      const events=["click","touchstart","mousemove","keydown","scroll"];
-      // On any interaction, also try to grab native fullscreen
-      const handleInteraction = ()=>{
-        if(!document.fullscreenElement && !document.webkitFullscreenElement){
-          requestNativeFs();
-        }
-        resetAutoFs();
+    if(view==="tv" && !hasTriedFs.current){
+      hasTriedFs.current = true;
+      const tryFullscreen = ()=>{
+        const el = document.documentElement;
+        // Method 1: Standard Fullscreen API
+        try{
+          const p = el.requestFullscreen?.() || el.webkitRequestFullscreen?.();
+          if(p && p.then) p.catch(()=>{});
+        }catch(e){}
+        // Method 2: Fullscreen popup window (uses #fullscreen-popup-windows flag)
+        // Only if we're not already in fullscreen after a moment
+        setTimeout(()=>{
+          if(!document.fullscreenElement && !document.webkitFullscreenElement){
+            try{
+              const url = window.location.href;
+              const popup = window.open(url, '_self', 'fullscreen=yes');
+            }catch(e){}
+          }
+        }, 2000);
+        setTvFullscreen(true);
       };
-      events.forEach(e=>document.addEventListener(e,handleInteraction,{passive:true}));
-      return ()=>{
-        if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
-        events.forEach(e=>document.removeEventListener(e,handleInteraction));
-      };
+      setTimeout(tryFullscreen, 2000);
     }
-  },[view,resetAutoFs,requestNativeFs]);
+    if(view!=="tv"){
+      hasTriedFs.current = false;
+    }
+  },[view]);
 
   // Lock keyboard (Escape key) when in fullscreen to prevent accidental exit
   React.useEffect(()=>{
