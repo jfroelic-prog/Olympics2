@@ -878,7 +878,7 @@ function App() {
           // If fetch fails, fall back to normal reload
           window.location.reload();
         });
-    }, 30*60*1000);
+    }, 5*60*1000);
     return ()=>clearInterval(refreshTimer);
   },[]);
 
