@@ -829,31 +829,18 @@ function App() {
   },[tvFullscreen]);
 
   // Auto native browser fullscreen on load when in TV mode
-  // Uses chrome://flags #fullscreen-popup-windows and #system-keyboard-lock
   const hasTriedFs = React.useRef(false);
   React.useEffect(()=>{
     if(view==="tv" && !hasTriedFs.current){
       hasTriedFs.current = true;
-      const tryFullscreen = ()=>{
+      setTimeout(()=>{
         const el = document.documentElement;
-        // Method 1: Standard Fullscreen API
         try{
           const p = el.requestFullscreen?.() || el.webkitRequestFullscreen?.();
           if(p && p.then) p.catch(()=>{});
         }catch(e){}
-        // Method 2: Fullscreen popup window (uses #fullscreen-popup-windows flag)
-        // Only if we're not already in fullscreen after a moment
-        setTimeout(()=>{
-          if(!document.fullscreenElement && !document.webkitFullscreenElement){
-            try{
-              const url = window.location.href;
-              const popup = window.open(url, '_self', 'fullscreen=yes');
-            }catch(e){}
-          }
-        }, 2000);
         setTvFullscreen(true);
-      };
-      setTimeout(tryFullscreen, 2000);
+      }, 2000);
     }
     if(view!=="tv"){
       hasTriedFs.current = false;
@@ -877,23 +864,24 @@ function App() {
     };
   },[]);
 
-  // Auto-reload page every 30 minutes to pick up updates
+  // Auto-refresh page every 30 minutes to pick up updates WITHOUT leaving F11 fullscreen
   React.useEffect(()=>{
-    const reloadTimer = setTimeout(()=>{
-      // Exit fullscreen first
-      setTvFullscreen(false);
-      if(document.fullscreenElement||document.webkitFullscreenElement){
-        try{document.exitFullscreen?.();}catch(e){}
-        try{document.webkitExitFullscreen?.();}catch(e){}
-      }
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-      // Wait for fullscreen exit, then reload
-      setTimeout(()=>{
-        window.location.reload();
-      }, 1000);
+    const refreshTimer = setInterval(()=>{
+      // Fetch the latest version of this page and replace the entire document
+      // This preserves F11 browser fullscreen (no navigation = no F11 exit)
+      fetch(window.location.href + '?t=' + Date.now())
+        .then(r=>r.text())
+        .then(html=>{
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(()=>{
+          // If fetch fails, fall back to normal reload
+          window.location.reload();
+        });
     }, 30*60*1000);
-    return ()=>clearTimeout(reloadTimer);
+    return ()=>clearInterval(refreshTimer);
   },[]);
 
   const ts=(a)=>({padding:"8px 16px",borderRadius:8,border:"none",cursor:"pointer",fontSize:13,fontWeight:700,background:a?"#fff":"transparent",color:a?"#00313d":"rgba(255,255,255,0.65)",transition:"all 0.15s",whiteSpace:"nowrap"});
