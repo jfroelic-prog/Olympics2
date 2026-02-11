@@ -828,25 +828,64 @@ function App() {
     return ()=>document.removeEventListener("keydown",handler);
   },[tvFullscreen]);
 
-  // Auto-fullscreen after 30s of no interaction
+  // Auto native browser fullscreen after 10s of no interaction (requires chrome://flags fullscreen-popup-windows enabled)
   const autoFsTimerRef = React.useRef(null);
+  const requestNativeFs = React.useCallback(()=>{
+    const el = document.documentElement;
+    try{
+      if(el.requestFullscreen) el.requestFullscreen();
+      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    }catch(e){}
+    // Also enable CSS fullscreen for the TV overlay
+    if(!tvFullscreen && view==="tv") setTvFullscreen(true);
+  },[tvFullscreen, view]);
   const resetAutoFs = React.useCallback(()=>{
     if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
     autoFsTimerRef.current = setTimeout(()=>{
-      if(!tvFullscreen && view==="tv") setTvFullscreen(true);
-    }, 30000);
-  },[tvFullscreen, view]);
+      requestNativeFs();
+    }, 10000);
+  },[requestNativeFs]);
   React.useEffect(()=>{
-    if(view==="tv" && !tvFullscreen){
+    if(view==="tv"){
+      // Try native fullscreen immediately on load (may work with chrome flags)
+      setTimeout(()=>{
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+          requestNativeFs();
+        }
+      }, 3000);
       resetAutoFs();
       const events=["click","touchstart","mousemove","keydown","scroll"];
-      events.forEach(e=>document.addEventListener(e,resetAutoFs,{passive:true}));
+      // On any interaction, also try to grab native fullscreen
+      const handleInteraction = ()=>{
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+          requestNativeFs();
+        }
+        resetAutoFs();
+      };
+      events.forEach(e=>document.addEventListener(e,handleInteraction,{passive:true}));
       return ()=>{
         if(autoFsTimerRef.current) clearTimeout(autoFsTimerRef.current);
-        events.forEach(e=>document.removeEventListener(e,resetAutoFs));
+        events.forEach(e=>document.removeEventListener(e,handleInteraction));
       };
     }
-  },[view,tvFullscreen,resetAutoFs]);
+  },[view,resetAutoFs,requestNativeFs]);
+
+  // Lock keyboard (Escape key) when in fullscreen to prevent accidental exit
+  React.useEffect(()=>{
+    const onFsChange = async ()=>{
+      if(document.fullscreenElement || document.webkitFullscreenElement){
+        try{await navigator.keyboard?.lock(["Escape"]);}catch(e){}
+      }else{
+        try{navigator.keyboard?.unlock();}catch(e){}
+      }
+    };
+    document.addEventListener("fullscreenchange",onFsChange);
+    document.addEventListener("webkitfullscreenchange",onFsChange);
+    return ()=>{
+      document.removeEventListener("fullscreenchange",onFsChange);
+      document.removeEventListener("webkitfullscreenchange",onFsChange);
+    };
+  },[]);
 
   // Auto-reload page every 30 minutes to pick up updates
   React.useEffect(()=>{
