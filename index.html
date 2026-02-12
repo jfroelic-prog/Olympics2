@@ -279,26 +279,26 @@ ev(22,"12:10","Ice Hockey","Men's Gold Medal Game",V.h1,HMA,true),
 ev(22,"20:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
 ];
 const MS=[
-{rank:1,code:"NO",name:"Norway",gold:7,silver:2,bronze:4,total:13},
-{rank:2,code:"IT",name:"Italy",gold:5,silver:2,bronze:7,total:14},
-{rank:3,code:"US",name:"United States",gold:4,silver:6,bronze:3,total:13},
-{rank:4,code:"SE",name:"Sweden",gold:4,silver:3,bronze:1,total:8},
-{rank:5,code:"CH",name:"Switzerland",gold:4,silver:1,bronze:2,total:7},
-{rank:6,code:"AT",name:"Austria",gold:3,silver:5,bronze:3,total:11},
-{rank:7,code:"FR",name:"France",gold:3,silver:4,bronze:1,total:8},
-{rank:8,code:"DE",name:"Germany",gold:3,silver:3,bronze:2,total:8},
-{rank:9,code:"JP",name:"Japan",gold:2,silver:2,bronze:5,total:9},
-{rank:10,code:"NL",name:"Netherlands",gold:1,silver:2,bronze:0,total:3},
-{rank:11,code:"CZ",name:"Czechia",gold:1,silver:1,bronze:0,total:2},
-{rank:12,code:"SI",name:"Slovenia",gold:1,silver:1,bronze:0,total:2},
-{rank:13,code:"AU",name:"Australia",gold:1,silver:0,bronze:0,total:1},
-{rank:14,code:"CA",name:"Canada",gold:0,silver:3,bronze:3,total:6},
-{rank:15,code:"CN",name:"China",gold:0,silver:1,bronze:2,total:3},
-{rank:16,code:"KR",name:"South Korea",gold:0,silver:1,bronze:1,total:2},
-{rank:17,code:"NZ",name:"New Zealand",gold:0,silver:1,bronze:1,total:2},
-{rank:18,code:"LV",name:"Latvia",gold:0,silver:1,bronze:0,total:1},
-{rank:19,code:"PL",name:"Poland",gold:0,silver:1,bronze:0,total:1},
-{rank:20,code:"BG",name:"Bulgaria",gold:0,silver:0,bronze:2,total:2},
+{rank:1,code:"IT",name:"Italy",gold:6,silver:3,bronze:8,total:17},
+{rank:2,code:"NO",name:"Norway",gold:7,silver:2,bronze:5,total:14},
+{rank:3,code:"US",name:"United States",gold:4,silver:7,bronze:3,total:14},
+{rank:4,code:"AT",name:"Austria",gold:3,silver:6,bronze:3,total:12},
+{rank:5,code:"JP",name:"Japan",gold:2,silver:2,bronze:6,total:10},
+{rank:6,code:"DE",name:"Germany",gold:4,silver:3,bronze:2,total:9},
+{rank:7,code:"SE",name:"Sweden",gold:4,silver:3,bronze:1,total:8},
+{rank:8,code:"FR",name:"France",gold:3,silver:4,bronze:1,total:8},
+{rank:9,code:"CH",name:"Switzerland",gold:4,silver:1,bronze:2,total:7},
+{rank:10,code:"CA",name:"Canada",gold:0,silver:3,bronze:4,total:7},
+{rank:11,code:"NL",name:"Netherlands",gold:2,silver:3,bronze:0,total:5},
+{rank:12,code:"KR",name:"South Korea",gold:1,silver:1,bronze:1,total:3},
+{rank:13,code:"CN",name:"China",gold:0,silver:1,bronze:2,total:3},
+{rank:14,code:"CZ",name:"Czechia",gold:1,silver:1,bronze:0,total:2},
+{rank:15,code:"SI",name:"Slovenia",gold:1,silver:1,bronze:0,total:2},
+{rank:16,code:"NZ",name:"New Zealand",gold:0,silver:1,bronze:1,total:2},
+{rank:17,code:"BG",name:"Bulgaria",gold:0,silver:0,bronze:2,total:2},
+{rank:18,code:"AU",name:"Australia",gold:1,silver:0,bronze:0,total:1},
+{rank:19,code:"LV",name:"Latvia",gold:0,silver:1,bronze:0,total:1},
+{rank:20,code:"PL",name:"Poland",gold:0,silver:1,bronze:0,total:1},
 {rank:21,code:"BE",name:"Belgium",gold:0,silver:0,bronze:1,total:1},
 {rank:22,code:"FI",name:"Finland",gold:0,silver:0,bronze:1,total:1},
 ];
@@ -865,7 +865,7 @@ function App() {
     };
   },[]);
 
-  // Prevent Chromebox from sleeping — Wake Lock API + fallback activity signals
+  // Prevent Chromebox from sleeping — Wake Lock API
   React.useEffect(()=>{
     let wakeLock = null;
     const requestWakeLock = async ()=>{
@@ -873,50 +873,24 @@ function App() {
         if('wakeLock' in navigator){
           wakeLock = await navigator.wakeLock.request('screen');
           wakeLock.addEventListener('release',()=>{
-            // Re-acquire if released (e.g. tab switch)
             setTimeout(requestWakeLock, 1000);
           });
         }
       }catch(e){}
     };
     requestWakeLock();
-    // Re-acquire wake lock when page becomes visible again
     const onVis = ()=>{if(document.visibilityState==='visible') requestWakeLock();};
     document.addEventListener('visibilitychange', onVis);
-    // Fallback: tiny invisible video loop keeps screen active on older ChromeOS
-    const canvas = document.createElement('canvas');
-    canvas.width=1; canvas.height=1;
-    const stream = canvas.captureStream?.();
-    if(stream){
-      const vid = document.createElement('video');
-      vid.srcObject = stream;
-      vid.muted = true;
-      vid.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-1';
-      document.body.appendChild(vid);
-      try{vid.play();}catch(e){}
-    }
     return ()=>{
       document.removeEventListener('visibilitychange', onVis);
       if(wakeLock) try{wakeLock.release();}catch(e){}
     };
   },[]);
 
-  // Auto-refresh page every 5 minutes to pick up updates WITHOUT leaving F11 fullscreen
+  // Auto-refresh page every 5 minutes to pick up updates
   React.useEffect(()=>{
     const refreshTimer = setInterval(()=>{
-      // Fetch the latest version of this page and replace the entire document
-      // This preserves F11 browser fullscreen (no navigation = no F11 exit)
-      fetch(window.location.href + '?t=' + Date.now())
-        .then(r=>r.text())
-        .then(html=>{
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(()=>{
-          // If fetch fails, fall back to normal reload
-          window.location.reload();
-        });
+      window.location.reload();
     }, 5*60*1000);
     return ()=>clearInterval(refreshTimer);
   },[]);
