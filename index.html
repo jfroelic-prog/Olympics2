@@ -865,7 +865,43 @@ function App() {
     };
   },[]);
 
-  // Auto-refresh page every 30 minutes to pick up updates WITHOUT leaving F11 fullscreen
+  // Prevent Chromebox from sleeping — Wake Lock API + fallback activity signals
+  React.useEffect(()=>{
+    let wakeLock = null;
+    const requestWakeLock = async ()=>{
+      try{
+        if('wakeLock' in navigator){
+          wakeLock = await navigator.wakeLock.request('screen');
+          wakeLock.addEventListener('release',()=>{
+            // Re-acquire if released (e.g. tab switch)
+            setTimeout(requestWakeLock, 1000);
+          });
+        }
+      }catch(e){}
+    };
+    requestWakeLock();
+    // Re-acquire wake lock when page becomes visible again
+    const onVis = ()=>{if(document.visibilityState==='visible') requestWakeLock();};
+    document.addEventListener('visibilitychange', onVis);
+    // Fallback: tiny invisible video loop keeps screen active on older ChromeOS
+    const canvas = document.createElement('canvas');
+    canvas.width=1; canvas.height=1;
+    const stream = canvas.captureStream?.();
+    if(stream){
+      const vid = document.createElement('video');
+      vid.srcObject = stream;
+      vid.muted = true;
+      vid.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-1';
+      document.body.appendChild(vid);
+      try{vid.play();}catch(e){}
+    }
+    return ()=>{
+      document.removeEventListener('visibilitychange', onVis);
+      if(wakeLock) try{wakeLock.release();}catch(e){}
+    };
+  },[]);
+
+  // Auto-refresh page every 5 minutes to pick up updates WITHOUT leaving F11 fullscreen
   React.useEffect(()=>{
     const refreshTimer = setInterval(()=>{
       // Fetch the latest version of this page and replace the entire document
