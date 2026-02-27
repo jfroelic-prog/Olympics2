@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Milano Cortina 2026 — Olympic Schedule</title>
+<title>Milano Cortina 2026 — Paralympic Schedule</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
@@ -22,40 +22,27 @@ const flag = (c) => {
 
 /* ── Sport emoji — each emoji represents the SPORT, not the athlete ── */
 const SE={
-  "Alpine Skiing":"\u26F7\uFE0F",
-  "Biathlon":"\u{1F3BF}",
-  "Bobsleigh":"\u{1F6F7}",
-  "Cross-Country Skiing":"\u{1F3BF}",
-  "Curling":"\u{1F94C}",
-  "Figure Skating":"\u26F8\uFE0F",
-  "Freestyle Skiing":"\u26F7\uFE0F",
-  "Ice Hockey":"\u{1F3D2}",
-  "Luge":"\u{1F6F7}",
-  "Nordic Combined":"\u{1F3BF}",
-  "Short Track Speed Skating":"\u26F8\uFE0F",
-  "Skeleton":"\u{1F6F7}",
-  "Ski Jumping":"\u{1F3BF}",
-  "Ski Mountaineering":"\u26F7\uFE0F",
-  "Snowboard":"\u{1F3C2}",
-  "Speed Skating":"\u26F8\uFE0F",
+  "Para Alpine Skiing":"\u26F7\uFE0F",
+  "Para Biathlon":"\u{1F3AF}",
+  "Para Cross-Country Skiing":"\u{1F3BF}",
+  "Para Ice Hockey":"\u{1F3D2}",
+  "Para Snowboard":"\u{1F3C2}",
+  "Wheelchair Curling":"\u{1F94C}",
   "Ceremonies":"\u{1F386}"
 };
 const ge = s => SE[s]||"\u2744\uFE0F";
 
 /* ── Venues ── */
-const V={am:"Stelvio, Bormio",aw:"Tofane, Cortina",bi:"Anterselva",bo:"Eugenio Monti, Cortina",xc:"Tesero, Val di Fiemme",cu:"Cortina Olympic Centre",fi:"Milano Forum",fr:"Livigno",h1:"Santa Giulia Arena, Milano",h2:"Milano Forum",lu:"Eugenio Monti, Cortina",nc:"Predazzo / Tesero",st:"Milano Forum",sk:"Eugenio Monti, Cortina",sj:"Predazzo",sm:"Livigno",sn:"Livigno",sp:"Fiera Milano",co:"San Siro, Milano",cc:"Verona Arena"};
+const V={al:"Tofane Alpine Centre, Cortina",bi:"Tesero XC Stadium, Val di Fiemme",xc:"Tesero XC Stadium, Val di Fiemme",ih:"Milano Santagiulia Arena",sb:"Cortina Para Snowboard Park",cu:"Cortina Curling Olympic Stadium",oc:"Arena di Verona",cc:"Cortina Curling Olympic Stadium"};
 
-const CN={US:"United States",CA:"Canada",NO:"Norway",SE:"Sweden",FI:"Finland",DE:"Germany",FR:"France",IT:"Italy",AT:"Austria",CH:"Switzerland",NL:"Netherlands",JP:"Japan",KR:"South Korea",CN:"China",GB:"Great Britain",AU:"Australia",NZ:"New Zealand",CZ:"Czechia",SI:"Slovenia",PL:"Poland",HU:"Hungary",LV:"Latvia",GE:"Georgia",UA:"Ukraine",DK:"Denmark",EE:"Estonia",ES:"Spain",BG:"Bulgaria"};
+const CN={US:"United States",CA:"Canada",NO:"Norway",SE:"Sweden",FI:"Finland",DE:"Germany",FR:"France",IT:"Italy",AT:"Austria",CH:"Switzerland",NL:"Netherlands",JP:"Japan",KR:"South Korea",CN:"China",GB:"Great Britain",AU:"Australia",NZ:"New Zealand",CZ:"Czechia",SI:"Slovenia",PL:"Poland",SK:"Slovakia",LV:"Latvia",GE:"Georgia",UA:"Ukraine",DK:"Denmark",EE:"Estonia",ES:"Spain",BG:"Bulgaria",HR:"Croatia",RU:"Russia",BY:"Belarus",KZ:"Kazakhstan",BR:"Brazil",MN:"Mongolia"};
 
-const HWA=["US","CA","FI","CZ","CH"],HWB=["SE","JP","DE","FR","IT"],HMA=["CA","US","FI","SE","CZ","CH"],HMB=["DE","NO","FR","DK","AT","IT"];
-const CMD=["US","CA","IT","NO","SE","GB","CH","KR","CZ","EE"],CM=["CA","SE","GB","US","NO","IT","CH","JP","DE","CN"],CW=["CA","SE","GB","US","KR","JP","CH","NO","DK","CN"];
-const AL=["AT","CH","IT","NO","FR","DE","US","CA","SE","SI"],BI=["NO","FR","DE","SE","IT","AT","CH","UA","CZ","FI"];
-const XC=["NO","SE","FI","DE","FR","IT","US","CA","AT"],FIG=["US","JP","KR","CA","FR","CN","IT","GE","DE","GB"];
-const FS=["US","CA","CN","FR","CH","AU","JP","SE","NO","GB"],SP=["NL","NO","JP","KR","CA","US","CN","DE","IT","SE"];
-const SH=["KR","CN","NL","CA","IT","US","HU","JP","GB","FR"],LU=["DE","AT","IT","US","LV","CA","FR","GB","NO"];
-const BO=["DE","US","CA","CH","GB","AT","IT","FR","NL","KR"],SK=["DE","GB","CA","US","AT","CH","NL","KR","IT","CN"];
-const SJ=["NO","DE","JP","AT","SI","PL","CH","FI","CZ"],SN=["US","JP","CA","AT","CH","AU","IT","NZ","FR","NO"];
-const SM=["IT","CH","FR","ES","AT","DE","SE","NO"],NC=["NO","DE","AT","JP","FI","FR","US","IT","CZ","SE"];
+const PA=["AT","CH","IT","NO","FR","DE","US","CA","SE","NZ","JP","GB","SK","CZ","HR","SI"],
+PB=["NO","FR","DE","SE","CA","US","UA","CN","JP","FI","AT","IT"],
+PX=["NO","FR","DE","SE","CA","US","UA","CN","JP","FI","AT","IT"],
+PIH=["US","CA","IT","CN","CZ","DE","JP","SK"],
+PSB=["US","CA","FR","NL","AU","FI","GB","JP","CN","IT"],
+WCT=["CN","CA","NO","SE","SK","KR","GB","US","IT","LV","CZ","DE"];
 
 const mp = cc => cc.map(c=>({code:c,name:CN[c]||c,flag:flag(c)}));
 let _i=0;
@@ -71,241 +58,140 @@ const ev = (d,t,s,ti,v,c,m=false)=>{
   const cetAmpm=hh>=12?"PM":"AM";
   const cetH12=hh===0?12:hh>12?hh-12:hh;
   const cetStr=`${cetH12}:${String(mm).padStart(2,"0")} ${cetAmpm}`;
-  return {id:`e${++_i}`,date:`2026-02-${String(dd).padStart(2,"0")}`,time:ct,timeCET:cetStr,sport:s,title:ti,venue:v,participants:mp(c),isMedal:m};
+  return {id:`e${++_i}`,date:`2026-03-${String(dd).padStart(2,"0")}`,time:ct,timeCET:cetStr,sport:s,title:ti,venue:v,participants:mp(c),isMedal:m};
 };
 
-/* ════ FULL SCHEDULE — Feb 4-22, 2026 ════ */
+/* ════ FULL SCHEDULE — Mar 4-15, 2026 ════ */
 const AE=[
-/* ═══ Feb 4 — Pre-Opening ═══ */
-ev(4,"14:05","Curling","Mixed Doubles RR Session 1",V.cu,CMD),ev(4,"20:05","Curling","Mixed Doubles RR Session 2",V.cu,CMD),
-/* ═══ Feb 5 — Pre-Opening ═══ */
-ev(5,"09:05","Curling","Mixed Doubles RR Session 3",V.cu,CMD),ev(5,"14:05","Curling","Mixed Doubles RR Session 4",V.cu,CMD),ev(5,"20:05","Curling","Mixed Doubles RR Session 5",V.cu,CMD),
-ev(5,"10:00","Snowboard","Men's Slopestyle Qualification",V.sn,SN),ev(5,"14:00","Snowboard","Women's Slopestyle Qualification",V.sn,SN),
-ev(5,"12:10","Ice Hockey","Women's Prelim — SWE vs JPN",V.h2,["SE","JP"]),ev(5,"16:40","Ice Hockey","Women's Prelim — GER vs FRA",V.h2,["DE","FR"]),
-/* ═══ Feb 6 — Opening Ceremony ═══ */
-ev(6,"09:05","Curling","Mixed Doubles RR Session 6",V.cu,CMD),ev(6,"14:05","Curling","Mixed Doubles RR Session 7",V.cu,CMD),
-ev(6,"12:00","Figure Skating","Team Event — Short Programs",V.fi,FIG),
-ev(6,"12:10","Ice Hockey","Women's Prelim — USA vs FIN",V.h1,["US","FI"]),ev(6,"16:40","Ice Hockey","Women's Prelim — CAN vs CZE",V.h1,["CA","CZ"]),
-ev(6,"20:00","Ceremonies","Opening Ceremony",V.co,["IT"]),
-/* ═══ Feb 7 — Day 1 ═══ */
-ev(7,"09:05","Curling","Mixed Doubles RR Session 8",V.cu,CMD),ev(7,"14:05","Curling","Mixed Doubles RR Session 9",V.cu,CMD),ev(7,"20:05","Curling","Mixed Doubles RR Session 10",V.cu,CMD),
-ev(7,"10:30","Alpine Skiing","Men's Downhill",V.am,AL,true),
-ev(7,"12:00","Cross-Country Skiing","Women's 10+10km Skiathlon",V.xc,XC,true),
-ev(7,"09:30","Freestyle Skiing","Women's Freeski Slopestyle Qual.",V.fr,FS),
-ev(7,"16:00","Ski Jumping","Men's Normal Hill Qualification",V.sj,SJ),
-ev(7,"13:00","Snowboard","Men's Slopestyle Final",V.sn,SN,true),
-ev(7,"18:00","Luge","Men's Singles Runs 1 & 2",V.lu,LU),
-ev(7,"16:00","Speed Skating","Men's 5000m",V.sp,SP,true),
-ev(7,"11:10","Ice Hockey","Women's Group B — GER vs JPN",V.h2,["DE","JP"]),ev(7,"15:40","Ice Hockey","Women's Group B — SWE vs ITA",V.h2,["SE","IT"]),
-ev(7,"12:10","Ice Hockey","Women's Group A — USA vs CHE",V.h1,["US","CH"]),ev(7,"16:40","Ice Hockey","Women's Group A — CAN vs FIN",V.h1,["CA","FI"]),
-/* ═══ Feb 8 — Day 2 ═══ */
-ev(8,"09:05","Curling","Mixed Doubles RR Session 11",V.cu,CMD),ev(8,"14:05","Curling","Mixed Doubles RR Session 12",V.cu,CMD),
-ev(8,"11:00","Alpine Skiing","Women's Downhill",V.aw,AL,true),
-ev(8,"14:30","Biathlon","Mixed Relay 4x6km",V.bi,BI,true),
-ev(8,"12:00","Cross-Country Skiing","Men's 10+10km Skiathlon",V.xc,XC,true),
-ev(8,"16:30","Ski Jumping","Men's Normal Hill Final",V.sj,SJ,true),
-ev(8,"12:00","Figure Skating","Team Event — Free Skate Final",V.fi,FIG,true),
-ev(8,"16:00","Speed Skating","Women's 3000m",V.sp,SP,true),
-ev(8,"13:00","Snowboard","Women's Slopestyle Final",V.sn,SN,true),
-ev(8,"10:00","Freestyle Skiing","Men's Freeski Slopestyle Qual.",V.fr,FS),
-ev(8,"18:00","Luge","Men's Singles Runs 3 & 4",V.lu,LU,true),
-ev(8,"12:10","Ice Hockey","Women's — JPN vs ITA",V.h2,["JP","IT"]),ev(8,"16:40","Ice Hockey","Women's — CHE vs USA",V.h1,["CH","US"]),
-/* ═══ Feb 9 — Day 3 ═══ */
-ev(9,"09:05","Curling","Mixed Doubles RR Session 13",V.cu,CMD),
-ev(9,"18:05","Curling","Mixed Doubles Semifinal 1",V.cu,CMD),ev(9,"18:05","Curling","Mixed Doubles Semifinal 2",V.cu,CMD),
-ev(9,"09:30","Alpine Skiing","Men's Team Combined — Downhill",V.am,AL),ev(9,"13:00","Alpine Skiing","Men's Team Combined — Slalom",V.am,AL,true),
-ev(9,"14:30","Freestyle Skiing","Men's Moguls Qualification",V.fr,FS),
-ev(9,"13:00","Snowboard","Men's Big Air Final",V.sn,SN,true),ev(9,"09:30","Snowboard","Women's Big Air Final",V.sn,SN,true),
-ev(9,"16:00","Ski Jumping","Women's Normal Hill Qualification",V.sj,SJ),
-ev(9,"10:15","Figure Skating","Ice Dance — Rhythm Dance",V.fi,FIG),
-ev(9,"14:00","Speed Skating","Women's 1500m",V.sp,SP,true),
-ev(9,"09:30","Freestyle Skiing","Women's Freeski Slopestyle Final",V.fr,FS,true),
-ev(9,"18:00","Luge","Women's Singles Runs 1 & 2",V.lu,LU),
-ev(9,"12:10","Ice Hockey","Women's — FRA vs SWE",V.h2,["FR","SE"]),ev(9,"16:40","Ice Hockey","Women's — CZE vs CAN",V.h1,["CZ","CA"]),
-ev(9,"12:10","Ice Hockey","Women's — CHE vs FIN",V.h1,["CH","FI"]),ev(9,"16:40","Ice Hockey","Women's — GER vs ITA",V.h2,["DE","IT"]),
-/* ═══ Feb 10 — Day 4 (TODAY) ═══ */
-ev(10,"14:05","Curling","Mixed Doubles Bronze — ITA vs GBR",V.cu,["IT","GB"],true),ev(10,"18:05","Curling","Mixed Doubles Gold — USA vs SWE",V.cu,["US","SE"],true),
-ev(10,"09:05","Curling","Men's Round Robin Session 1",V.cu,CM),
-ev(10,"09:30","Alpine Skiing","Women's Team Combined — Downhill",V.aw,AL),ev(10,"13:30","Alpine Skiing","Women's Team Combined — Slalom",V.aw,AL,true),
-ev(10,"13:30","Biathlon","Men's 20km Individual",V.bi,BI,true),
-ev(10,"08:15","Cross-Country Skiing","Sprint Classic Qualification",V.xc,XC),ev(10,"11:45","Cross-Country Skiing","Men's Sprint Classic Final",V.xc,XC,true),ev(10,"12:15","Cross-Country Skiing","Women's Sprint Classic Final",V.xc,XC,true),
-ev(10,"12:30","Freestyle Skiing","Men's Freeski Slopestyle Final",V.fr,FS,true),
-ev(10,"10:15","Freestyle Skiing","Men's Moguls Qualification 1",V.fr,FS),ev(10,"14:15","Freestyle Skiing","Women's Moguls Qualification 1",V.fr,FS),
-ev(10,"17:30","Ski Jumping","Mixed Team Normal Hill",V.sj,SJ,true),
-ev(10,"17:00","Luge","Women's Singles Runs 3 & 4",V.lu,LU,true),
-ev(10,"09:30","Short Track Speed Skating","Women's 500m Heats",V.st,SH),ev(10,"10:10","Short Track Speed Skating","Men's 1000m Heats",V.st,SH),
-ev(10,"19:00","Short Track Speed Skating","Mixed Team Relay Final",V.st,SH,true),
-ev(10,"18:30","Figure Skating","Men's Short Program",V.fi,FIG),
-ev(10,"11:10","Ice Hockey","Women's Group B — JPN vs SWE",V.h2,["JP","SE"]),ev(10,"16:40","Ice Hockey","Women's Group B — ITA vs GER",V.h2,["IT","DE"]),
-ev(10,"20:10","Ice Hockey","Women's Group A — CAN vs USA",V.h1,["CA","US"]),ev(10,"21:10","Ice Hockey","Women's Group A — FIN vs CHE",V.h1,["FI","CH"]),
-/* ═══ Feb 11 — Day 5 ═══ */
-ev(11,"10:30","Alpine Skiing","Men's Super-G",V.am,AL,true),
-ev(11,"13:15","Biathlon","Women's 15km Individual",V.bi,BI,true),
-ev(11,"12:45","Nordic Combined","Ind. Gundersen NH/10km XC",V.nc,NC,true),
-ev(11,"13:15","Freestyle Skiing","Women's Moguls Final",V.fr,FS,true),
-ev(11,"17:30","Speed Skating","Men's 1000m",V.sp,SP,true),
-ev(11,"19:30","Figure Skating","Ice Dance — Free Dance",V.fi,FIG,true),
-ev(11,"16:00","Luge","Women's Doubles Runs 1 & 2",V.lu,LU,true),ev(11,"16:51","Luge","Men's Doubles Runs 1 & 2",V.lu,LU,true),
-ev(11,"09:30","Snowboard","Women's Halfpipe Qualification",V.sn,SN),
-ev(11,"10:00","Freestyle Skiing","Women's Moguls Qualification 2",V.fr,FS),
-ev(11,"09:00","Skeleton","Women Official Training",V.sk,SK),
-ev(11,"15:40","Ice Hockey","Men's Group B — SVK vs FIN",V.h1,["SK","FI"]),ev(11,"20:10","Ice Hockey","Men's Group C — SWE vs ITA",V.h2,["SE","IT"]),
-ev(11,"18:05","Curling","Men's Round Robin — CZE vs USA",V.cu,["CZ","US"]),ev(11,"18:05","Curling","Men's Round Robin — SWE vs ITA",V.cu,["SE","IT"]),
-ev(11,"18:05","Curling","Men's Round Robin — CAN vs GER",V.cu,["CA","DE"]),ev(11,"18:05","Curling","Men's Round Robin — CHN vs GBR",V.cu,["CN","GB"]),
-/* ═══ Feb 12 — Day 6 ═══ */
-ev(12,"09:05","Curling","Men's Round Robin Session 3",V.cu,CM),ev(12,"14:05","Curling","Women's Round Robin Session 2",V.cu,CW),
-ev(12,"11:00","Alpine Skiing","Women's Super-G",V.aw,AL,true),
-ev(12,"14:30","Biathlon","Men's 10km Sprint",V.bi,BI,true),
-ev(12,"12:00","Cross-Country Skiing","Men's 20km Individual",V.xc,XC,true),
-ev(12,"16:30","Ski Jumping","Men's Large Hill Qualification",V.sj,SJ),
-ev(12,"16:00","Speed Skating","Women's 500m",V.sp,SP,true),
-ev(12,"18:00","Luge","Team Relay",V.lu,LU,true),
-ev(12,"12:30","Freestyle Skiing","Women's Freeski Slopestyle Final",V.fr,FS,true),
-ev(12,"10:00","Skeleton","Men's Runs 3 & 4",V.sk,SK,true),
-ev(12,"19:00","Short Track Speed Skating","Women's 500m Final",V.st,SH,true),
-ev(12,"10:00","Snowboard","Men's Halfpipe Final",V.sn,SN,true),
-ev(12,"10:00","Bobsleigh","Women's Monobob Runs 1 & 2",V.bo,BO),
-ev(12,"12:10","Ice Hockey","Women's Quarterfinals",V.h1,HWA),
-/* ═══ Feb 13 — Day 7 ═══ */
-ev(13,"09:05","Curling","Men's Round Robin Session 4",V.cu,CM),ev(13,"14:05","Curling","Women's Round Robin Session 3",V.cu,CW),
-ev(13,"14:30","Biathlon","Women's 7.5km Sprint",V.bi,BI,true),
-ev(13,"12:00","Cross-Country Skiing","Women's 20km Individual",V.xc,XC,true),
-ev(13,"16:30","Ski Jumping","Men's Large Hill Final",V.sj,SJ,true),
-ev(13,"16:00","Speed Skating","Men's 1500m",V.sp,SP,true),
-ev(13,"10:00","Nordic Combined","Men's Individual Gundersen LH/10km",V.nc,NC,true),
-ev(13,"18:00","Figure Skating","Men's Free Skate",V.fi,FIG,true),
-ev(13,"10:00","Skeleton","Women's Runs 1 & 2",V.sk,SK),
-ev(13,"19:00","Short Track Speed Skating","Men's 1000m Final",V.st,SH,true),
-ev(13,"14:00","Snowboard","Women's Halfpipe Final",V.sn,SN,true),
-ev(13,"10:00","Bobsleigh","Women's Monobob Runs 3 & 4",V.bo,BO,true),
-ev(13,"12:10","Ice Hockey","Men's Prelim — CAN vs USA",V.h1,["CA","US"]),ev(13,"16:40","Ice Hockey","Men's Prelim — SWE vs FIN",V.h1,["SE","FI"]),
-/* ═══ Feb 14 — Day 8 ═══ */
-ev(14,"09:05","Curling","Men's RR Session 5",V.cu,CM),ev(14,"14:05","Curling","Women's RR Session 4",V.cu,CW),
-ev(14,"10:00","Alpine Skiing","Men's Giant Slalom Run 1",V.am,AL),ev(14,"13:30","Alpine Skiing","Men's Giant Slalom Run 2",V.am,AL,true),
-ev(14,"14:30","Biathlon","Men's 12.5km Pursuit",V.bi,BI,true),
-ev(14,"12:00","Cross-Country Skiing","Team Sprint Classic",V.xc,XC,true),
-ev(14,"16:00","Speed Skating","Women's 1000m",V.sp,SP,true),
-ev(14,"16:30","Ski Jumping","Women's Large Hill Qualification",V.sj,SJ),
-ev(14,"10:00","Skeleton","Women's Runs 3 & 4",V.sk,SK,true),
-ev(14,"12:15","Freestyle Skiing","Men's Aerials Qualification",V.fr,FS),
-ev(14,"19:00","Short Track Speed Skating","Women's 1500m Final",V.st,SH,true),
-ev(14,"10:00","Bobsleigh","Two-Man Runs 1 & 2",V.bo,BO),
-ev(14,"12:10","Ice Hockey","Men's Prelim — NOR vs DE",V.h2,["NO","DE"]),ev(14,"16:40","Ice Hockey","Men's Prelim — CZE vs CHE",V.h1,["CZ","CH"]),
-/* ═══ Feb 15 — Day 9 ═══ */
-ev(15,"09:05","Curling","Men's RR Session 6",V.cu,CM),ev(15,"14:05","Curling","Women's RR Session 5",V.cu,CW),
-ev(15,"10:00","Alpine Skiing","Women's Giant Slalom Run 1",V.aw,AL),ev(15,"13:30","Alpine Skiing","Women's Giant Slalom Run 2",V.aw,AL,true),
-ev(15,"14:30","Biathlon","Women's 10km Pursuit",V.bi,BI,true),
-ev(15,"12:00","Cross-Country Skiing","Men's 4x10km Relay",V.xc,XC,true),
-ev(15,"16:00","Speed Skating","Men's 10000m",V.sp,SP,true),
-ev(15,"16:30","Ski Jumping","Women's Large Hill Final",V.sj,SJ,true),
-ev(15,"12:15","Freestyle Skiing","Men's Aerials Final",V.fr,FS,true),
-ev(15,"18:00","Figure Skating","Pairs — Short Program",V.fi,FIG),
-ev(15,"10:00","Skeleton","Mixed Team Event",V.sk,SK,true),
-ev(15,"10:00","Snowboard","Men's Snowboard Cross Seeding",V.sn,SN),
-ev(15,"10:00","Bobsleigh","Two-Man Runs 3 & 4",V.bo,BO,true),
-ev(15,"10:00","Nordic Combined","Women's Individual NH/5km",V.nc,NC,true),
-ev(15,"12:10","Ice Hockey","Men's Prelim — FRA vs DK",V.h2,["FR","DK"]),ev(15,"16:40","Ice Hockey","Men's Prelim — IT vs AT",V.h2,["IT","AT"]),
-ev(15,"19:00","Short Track Speed Skating","Men's 500m Final",V.st,SH,true),
-/* ═══ Feb 16 — Day 10 ═══ */
-ev(16,"09:05","Curling","Men's RR Session 7",V.cu,CM),ev(16,"14:05","Curling","Women's RR Session 6",V.cu,CW),
-ev(16,"10:00","Alpine Skiing","Men's Slalom Run 1",V.am,AL),ev(16,"13:30","Alpine Skiing","Men's Slalom Run 2",V.am,AL,true),
-ev(16,"12:15","Freestyle Skiing","Women's Aerials Final",V.fr,FS,true),ev(16,"14:30","Freestyle Skiing","Men's Ski Cross Finals",V.fr,FS,true),
-ev(16,"18:00","Figure Skating","Pairs — Free Skate",V.fi,FIG,true),
-ev(16,"10:00","Nordic Combined","Men's Team LH/2x7.5km",V.nc,NC,true),
-ev(16,"16:30","Ski Jumping","Men's Team Large Hill",V.sj,SJ,true),
-ev(16,"14:00","Snowboard","Men's Snowboard Cross Finals",V.sn,SN,true),
-ev(16,"10:00","Bobsleigh","Women's Bobsleigh Runs 1 & 2",V.bo,BO),
-ev(16,"19:00","Short Track Speed Skating","Women's 1000m Final",V.st,SH,true),
-ev(16,"12:10","Ice Hockey","Men's Prelim — CAN vs CZE",V.h1,["CA","CZ"]),ev(16,"16:40","Ice Hockey","Men's Prelim — SWE vs CHE",V.h1,["SE","CH"]),
-/* ═══ Feb 17 — Day 11 ═══ */
-ev(17,"09:05","Curling","Men's RR Session 8",V.cu,CM),ev(17,"14:05","Curling","Women's RR Session 7",V.cu,CW),
-ev(17,"14:30","Biathlon","Single Mixed Relay",V.bi,BI,true),
-ev(17,"12:00","Cross-Country Skiing","Women's 4x10km Relay",V.xc,XC,true),
-ev(17,"16:00","Speed Skating","Men's 500m",V.sp,SP,true),
-ev(17,"14:00","Snowboard","Women's Snowboard Cross Finals",V.sn,SN,true),
-ev(17,"12:15","Freestyle Skiing","Women's Ski Cross Finals",V.fr,FS,true),ev(17,"10:00","Freestyle Skiing","Men's Dual Moguls Qualification",V.fr,FS),
-ev(17,"10:00","Bobsleigh","Women's Bobsleigh Runs 3 & 4",V.bo,BO,true),
-ev(17,"18:00","Figure Skating","Women's Short Program",V.fi,FIG),
-ev(17,"12:10","Ice Hockey","Men's Prelim — USA vs FIN",V.h1,["US","FI"]),ev(17,"16:40","Ice Hockey","Men's Prelim — NOR vs IT",V.h2,["NO","IT"]),
-/* ═══ Feb 18 — Day 12 ═══ */
-ev(18,"09:05","Curling","Men's RR Session 9",V.cu,CM),ev(18,"14:05","Curling","Women's RR Session 8",V.cu,CW),
-ev(18,"10:00","Alpine Skiing","Women's Slalom Run 1",V.aw,AL),ev(18,"13:30","Alpine Skiing","Women's Slalom Run 2",V.aw,AL,true),
-ev(18,"14:30","Biathlon","Men's 4x7.5km Relay",V.bi,BI,true),
-ev(18,"12:00","Cross-Country Skiing","Men's 50km Mass Start",V.xc,XC,true),
-ev(18,"16:00","Speed Skating","Women's 5000m",V.sp,SP,true),
-ev(18,"12:15","Freestyle Skiing","Men's Dual Moguls Final",V.fr,FS,true),
-ev(18,"14:00","Snowboard","Mixed Snowboard Cross Finals",V.sn,SN,true),
-ev(18,"10:00","Snowboard","Men's Big Air Qualification",V.sn,SN),
-ev(18,"19:00","Short Track Speed Skating","Men's 5000m Relay Final",V.st,SH,true),
-ev(18,"10:00","Bobsleigh","Four-Man Runs 1 & 2",V.bo,BO),
-ev(18,"12:10","Ice Hockey","Men's Quarterfinals",V.h1,HMA),ev(18,"16:40","Ice Hockey","Women's Semifinals",V.h2,HWA),
-/* ═══ Feb 19 — Day 13 ═══ */
-ev(19,"09:05","Curling","Men's Semifinal",V.cu,CM),ev(19,"14:05","Curling","Women's Semifinal",V.cu,CW),
-ev(19,"14:30","Biathlon","Women's 4x6km Relay",V.bi,BI,true),
-ev(19,"16:00","Speed Skating","Men's Team Pursuit",V.sp,SP,true),
-ev(19,"12:15","Freestyle Skiing","Women's Dual Moguls Final",V.fr,FS,true),
-ev(19,"14:00","Freestyle Skiing","Men's Freeski Halfpipe Final",V.fr,FS,true),
-ev(19,"18:00","Figure Skating","Women's Free Skate",V.fi,FIG,true),
-ev(19,"10:00","Ski Mountaineering","Women's Sprint Qualification",V.sm,SM),ev(19,"14:00","Ski Mountaineering","Women's Sprint Final",V.sm,SM,true),
-ev(19,"10:00","Bobsleigh","Four-Man Runs 3 & 4",V.bo,BO,true),
-ev(19,"12:10","Ice Hockey","Women's Bronze Medal Game",V.h1,HWA,true),ev(19,"13:10","Ice Hockey","Women's Gold Medal Game: USA vs Canada",V.h1,HWA,true),ev(19,"16:40","Ice Hockey","Men's Quarterfinals",V.h2,HMB),
-/* ═══ Feb 20 — Day 14 ═══ */
-ev(20,"08:05","Curling","Women's Semifinal: USA vs Switzerland",V.cu,CW),ev(20,"08:05","Curling","Women's Semifinal: Sweden vs Canada",V.cu,CW),
-ev(20,"13:05","Curling","Men's Bronze Medal Game",V.cu,CM,true),
-ev(20,"08:15","Biathlon","Men's 15km Mass Start",V.bi,BI,true),
-ev(20,"10:30","Speed Skating","Women's 1500m",V.sp,SP,true),
-ev(20,"05:55","Freestyle Skiing","Women's Ski Cross Finals",V.fr,FS,true),
-ev(20,"07:30","Freestyle Skiing","Men's Aerials Finals",V.fr,FS,true),
-ev(20,"13:30","Freestyle Skiing","Men's Freeski Halfpipe Final",V.fr,FS,true),
-ev(20,"12:00","Bobsleigh","2-Woman Bobsled Runs 1 & 2",V.bo,BO),
-ev(20,"10:40","Ice Hockey","Men's Semifinal: Canada vs Finland",V.h2,HMB),ev(20,"15:10","Ice Hockey","Men's Semifinal: USA vs Slovakia",V.h2,HMB),
-/* ═══ Feb 21 — Day 15 ═══ */
-ev(21,"14:05","Curling","Women's Bronze Medal Game",V.cu,CW,true),
-ev(21,"14:30","Biathlon","Women's 12.5km Mass Start",V.bi,BI,true),
-ev(21,"12:00","Cross-Country Skiing","Women's 50km Mass Start",V.xc,XC,true),
-ev(21,"16:00","Speed Skating","Men's Mass Start",V.sp,SP,true),
-ev(21,"12:15","Freestyle Skiing","Men's Ski Cross Finals",V.fr,FS,true),
-ev(21,"14:00","Snowboard","Parallel Giant Slalom Finals",V.sn,SN,true),
-ev(21,"10:00","Ski Mountaineering","Men's Sprint Qualification",V.sm,SM),ev(21,"14:00","Ski Mountaineering","Men's Sprint Final",V.sm,SM,true),
-ev(21,"10:00","Bobsleigh","Women's Bobsleigh Final (4-woman)",V.bo,BO,true),
-ev(21,"19:00","Short Track Speed Skating","Women's Relay Final",V.st,SH,true),
-ev(21,"12:10","Ice Hockey","Men's Bronze Medal Game",V.h1,HMA,true),
-/* ═══ Feb 22 — Closing Day ═══ */
-ev(22,"09:05","Curling","Men's Gold Medal Game: Great Britain vs Canada",V.cu,CM,true),ev(22,"14:05","Curling","Women's Gold Medal Game",V.cu,CW,true),
-ev(22,"09:00","Cross-Country Skiing","Men's 50km Mass Start",V.xc,XC,true),
-ev(22,"16:00","Speed Skating","Women's Mass Start",V.sp,SP,true),
-ev(22,"10:00","Ski Mountaineering","Mixed Relay",V.sm,SM,true),
-ev(22,"10:00","Bobsleigh","Four-Man Final",V.bo,BO,true),
-ev(22,"12:10","Ice Hockey","Men's Gold Medal Game",V.h1,HMA,true),
-ev(22,"20:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
+/* ═══ Mar 4 — Pre-Competition ═══ */
+ev(4,"19:05","Wheelchair Curling","Mixed Doubles Round Robin Session 1",V.cu,WCT),
+ev(4,"20:30","Wheelchair Curling","Mixed Doubles Round Robin Session 2",V.cu,WCT),
+/* ═══ Mar 5 — Pre-Competition ═══ */
+ev(5,"10:05","Wheelchair Curling","Mixed Doubles Round Robin Session 3",V.cu,WCT),
+ev(5,"19:05","Wheelchair Curling","Mixed Doubles Round Robin Session 4",V.cu,WCT),
+/* ═══ Mar 6 — Opening Ceremony ═══ */
+ev(6,"09:05","Wheelchair Curling","Mixed Doubles Round Robin Session 5",V.cu,WCT),
+ev(6,"14:05","Wheelchair Curling","Mixed Doubles Round Robin Session 6",V.cu,WCT),
+ev(6,"20:00","Ceremonies","Opening Ceremony",V.oc,["IT"]),
+/* ═══ Mar 7 — Day 1 ═══ */
+ev(7,"09:30","Para Alpine Skiing","Women's Downhill - VI",V.al,PA,true),
+ev(7,"11:00","Para Alpine Skiing","Men's Downhill - Sitting",V.al,PA,true),
+ev(7,"12:30","Para Alpine Skiing","Men's Downhill - Standing",V.al,PA,true),
+ev(7,"10:00","Para Biathlon","Women's 7.5km Sprint - Sitting",V.bi,PB,true),
+ev(7,"12:00","Para Biathlon","Women's 7.5km Sprint - Standing",V.bi,PB,true),
+ev(7,"13:30","Para Biathlon","Women's 7.5km Sprint - VI",V.bi,PB,true),
+ev(7,"11:00","Para Snowboard","Women's Snowboard Cross",V.sb,PSB,true),
+ev(7,"13:00","Para Snowboard","Men's Snowboard Cross - SB-UL",V.sb,PSB,true),
+ev(7,"14:00","Para Snowboard","Men's Snowboard Cross - SB-LL1",V.sb,PSB,true),
+ev(7,"15:00","Para Snowboard","Men's Snowboard Cross - SB-LL2",V.sb,PSB,true),
+ev(7,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 1",V.cu,WCT),
+ev(7,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 2",V.cu,WCT),
+ev(7,"12:05","Para Ice Hockey","Preliminary Round - Game 1",V.ih,PIH),
+ev(7,"16:05","Para Ice Hockey","Preliminary Round - Game 2",V.ih,PIH),
+/* ═══ Mar 8 — Day 2 ═══ */
+ev(8,"09:30","Para Alpine Skiing","Women's Downhill - Sitting",V.al,PA,true),
+ev(8,"11:00","Para Alpine Skiing","Women's Downhill - Standing",V.al,PA,true),
+ev(8,"12:30","Para Alpine Skiing","Men's Downhill - VI",V.al,PA,true),
+ev(8,"10:00","Para Biathlon","Men's 7.5km Sprint - Sitting",V.bi,PB,true),
+ev(8,"12:00","Para Biathlon","Men's 7.5km Sprint - Standing",V.bi,PB,true),
+ev(8,"13:30","Para Biathlon","Men's 7.5km Sprint - VI",V.bi,PB,true),
+ev(8,"11:00","Para Snowboard","Women's Banked Slalom",V.sb,PSB,true),
+ev(8,"13:00","Para Snowboard","Men's Banked Slalom - SB-UL",V.sb,PSB,true),
+ev(8,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 3",V.cu,WCT),
+ev(8,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 4",V.cu,WCT),
+ev(8,"12:05","Para Ice Hockey","Preliminary Round - Game 3",V.ih,PIH),
+ev(8,"16:05","Para Ice Hockey","Preliminary Round - Game 4",V.ih,PIH),
+/* ═══ Mar 9 — Day 3 ═══ */
+ev(9,"09:30","Para Alpine Skiing","Women's Super-G - VI",V.al,PA,true),
+ev(9,"11:00","Para Alpine Skiing","Men's Super-G - Sitting",V.al,PA,true),
+ev(9,"12:30","Para Alpine Skiing","Men's Super-G - Standing",V.al,PA,true),
+ev(9,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 5",V.cu,WCT),
+ev(9,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 6",V.cu,WCT),
+ev(9,"12:05","Para Ice Hockey","Preliminary Round - Game 5",V.ih,PIH),
+ev(9,"16:05","Para Ice Hockey","Preliminary Round - Game 6",V.ih,PIH),
+/* ═══ Mar 10 — Day 4 ═══ */
+ev(10,"09:30","Para Alpine Skiing","Women's Super-G - Sitting",V.al,PA,true),
+ev(10,"11:00","Para Alpine Skiing","Women's Super-G - Standing",V.al,PA,true),
+ev(10,"12:30","Para Alpine Skiing","Men's Super-G - VI",V.al,PA,true),
+ev(10,"09:45","Para Cross-Country Skiing","Women's Sprint Classic Qual.",V.xc,PX),
+ev(10,"12:15","Para Cross-Country Skiing","Women's Sprint Classic - Sitting",V.xc,PX,true),
+ev(10,"13:00","Para Cross-Country Skiing","Women's Sprint Classic - Standing",V.xc,PX,true),
+ev(10,"14:00","Para Cross-Country Skiing","Women's Sprint Classic - VI",V.xc,PX,true),
+ev(10,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 7",V.cu,WCT),
+ev(10,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 8",V.cu,WCT),
+ev(10,"12:05","Para Ice Hockey","Preliminary Round - Game 7",V.ih,PIH),
+ev(10,"16:05","Para Ice Hockey","Preliminary Round - Game 8",V.ih,PIH),
+/* ═══ Mar 11 — Day 5 ═══ */
+ev(11,"09:30","Para Alpine Skiing","Women's Alpine Combined - VI",V.al,PA,true),
+ev(11,"11:00","Para Alpine Skiing","Men's Alpine Combined - Sitting",V.al,PA,true),
+ev(11,"12:30","Para Alpine Skiing","Men's Alpine Combined - Standing",V.al,PA,true),
+ev(11,"09:45","Para Cross-Country Skiing","Men's Sprint Classic Qual.",V.xc,PX),
+ev(11,"12:15","Para Cross-Country Skiing","Men's Sprint Classic - Sitting",V.xc,PX,true),
+ev(11,"13:00","Para Cross-Country Skiing","Men's Sprint Classic - Standing",V.xc,PX,true),
+ev(11,"14:00","Para Cross-Country Skiing","Men's Sprint Classic - VI",V.xc,PX,true),
+ev(11,"09:45","Para Cross-Country Skiing","Women's 10km Classic - Sitting",V.xc,PX,true),
+ev(11,"11:30","Para Cross-Country Skiing","Women's 10km Classic - Standing",V.xc,PX,true),
+ev(11,"13:15","Para Cross-Country Skiing","Women's 10km Classic - VI",V.xc,PX,true),
+ev(11,"14:30","Wheelchair Curling","Mixed Doubles Semifinals",V.cu,WCT),
+ev(11,"18:00","Wheelchair Curling","Mixed Doubles Bronze Medal Game",V.cu,WCT,true),
+ev(11,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 9",V.cu,WCT),
+/* ═══ Mar 12 — Day 6 ═══ */
+ev(12,"09:30","Para Alpine Skiing","Women's Alpine Combined - Sitting",V.al,PA,true),
+ev(12,"11:00","Para Alpine Skiing","Women's Alpine Combined - Standing",V.al,PA,true),
+ev(12,"12:30","Para Alpine Skiing","Men's Alpine Combined - VI",V.al,PA,true),
+ev(12,"09:45","Para Cross-Country Skiing","Men's 10km Classic - Sitting",V.xc,PX,true),
+ev(12,"11:30","Para Cross-Country Skiing","Men's 10km Classic - Standing",V.xc,PX,true),
+ev(12,"13:15","Para Cross-Country Skiing","Men's 10km Classic - VI",V.xc,PX,true),
+ev(12,"14:30","Wheelchair Curling","Mixed Doubles Gold Medal Game",V.cu,WCT,true),
+ev(12,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 10",V.cu,WCT),
+ev(12,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 11",V.cu,WCT),
+ev(12,"12:05","Para Ice Hockey","Quarterfinals - Game 1",V.ih,PIH),
+ev(12,"16:05","Para Ice Hockey","Quarterfinals - Game 2",V.ih,PIH),
+/* ═══ Mar 13 — Day 7 ═══ */
+ev(13,"09:30","Para Alpine Skiing","Women's Giant Slalom Run 1 - VI",V.al,PA),
+ev(13,"12:00","Para Alpine Skiing","Women's Giant Slalom Run 2 - VI",V.al,PA,true),
+ev(13,"09:30","Para Alpine Skiing","Men's Giant Slalom Run 1 - Sitting",V.al,PA),
+ev(13,"12:00","Para Alpine Skiing","Men's Giant Slalom Run 2 - Sitting",V.al,PA,true),
+ev(13,"10:00","Para Biathlon","Women's Sprint Pursuit Qual.",V.bi,PB),
+ev(13,"12:30","Para Biathlon","Women's Sprint Pursuit - Sitting",V.bi,PB,true),
+ev(13,"13:30","Para Biathlon","Women's Sprint Pursuit - Standing",V.bi,PB,true),
+ev(13,"14:30","Para Biathlon","Women's Sprint Pursuit - VI",V.bi,PB,true),
+ev(13,"10:00","Para Biathlon","Men's Sprint Pursuit Qual.",V.bi,PB),
+ev(13,"12:30","Para Biathlon","Men's Sprint Pursuit - Sitting",V.bi,PB,true),
+ev(13,"13:30","Para Biathlon","Men's Sprint Pursuit - Standing",V.bi,PB,true),
+ev(13,"14:30","Para Biathlon","Men's Sprint Pursuit - VI",V.bi,PB,true),
+ev(13,"10:00","Wheelchair Curling","Mixed Team Semifinals",V.cu,WCT),
+ev(13,"18:30","Wheelchair Curling","Mixed Team Bronze Medal Game",V.cu,WCT,true),
+ev(13,"12:05","Para Ice Hockey","Semifinals - Game 1",V.ih,PIH),
+ev(13,"16:05","Para Ice Hockey","Semifinals - Game 2",V.ih,PIH),
+/* ═══ Mar 14 — Day 8 ═══ */
+ev(14,"09:30","Para Alpine Skiing","Women's Giant Slalom Run 1 - Sitting",V.al,PA),
+ev(14,"12:00","Para Alpine Skiing","Women's Giant Slalom Run 2 - Sitting",V.al,PA,true),
+ev(14,"09:30","Para Alpine Skiing","Men's Giant Slalom Run 1 - Standing",V.al,PA),
+ev(14,"12:00","Para Alpine Skiing","Men's Giant Slalom Run 2 - Standing",V.al,PA,true),
+ev(14,"09:30","Para Alpine Skiing","Men's Giant Slalom Run 1 - VI",V.al,PA),
+ev(14,"12:00","Para Alpine Skiing","Men's Giant Slalom Run 2 - VI",V.al,PA,true),
+ev(14,"09:45","Para Cross-Country Skiing","Women's 20km Free - Sitting",V.xc,PX,true),
+ev(14,"11:30","Para Cross-Country Skiing","Women's 20km Free - Standing",V.xc,PX,true),
+ev(14,"13:15","Para Cross-Country Skiing","Women's 20km Free - VI",V.xc,PX,true),
+ev(14,"15:00","Wheelchair Curling","Mixed Team Gold Medal Game",V.cu,WCT,true),
+ev(14,"12:05","Para Ice Hockey","Bronze Medal Game",V.ih,PIH,true),
+/* ═══ Mar 15 — Closing Day ═══ */
+ev(15,"09:00","Para Alpine Skiing","Women's Slalom Run 1 - All Categories",V.al,PA),
+ev(15,"12:00","Para Alpine Skiing","Women's Slalom Run 2 - All Categories",V.al,PA,true),
+ev(15,"09:00","Para Alpine Skiing","Men's Slalom Run 1 - All Categories",V.al,PA),
+ev(15,"12:00","Para Alpine Skiing","Men's Slalom Run 2 - All Categories",V.al,PA,true),
+ev(15,"09:45","Para Cross-Country Skiing","Men's 20km Free - Sitting",V.xc,PX,true),
+ev(15,"11:30","Para Cross-Country Skiing","Men's 20km Free - Standing",V.xc,PX,true),
+ev(15,"13:15","Para Cross-Country Skiing","Men's 20km Free - VI",V.xc,PX,true),
+ev(15,"16:05","Para Ice Hockey","Gold Medal Game",V.ih,PIH,true),
+ev(15,"19:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
 ];
+// ========== MEDAL STANDINGS (empty until games begin Mar 7) ==========
 const MS=[
-{rank:1,code:"NO",name:"Norway",gold:16,silver:8,bronze:10,total:34},
-{rank:2,code:"US",name:"United States",gold:9,silver:12,bronze:6,total:27},
-{rank:3,code:"IT",name:"Italy",gold:9,silver:5,bronze:12,total:26},
-{rank:4,code:"DE",name:"Germany",gold:6,silver:8,bronze:8,total:22},
-{rank:5,code:"FR",name:"France",gold:6,silver:8,bronze:5,total:19},
-{rank:6,code:"NL",name:"Netherlands",gold:6,silver:7,bronze:3,total:16},
-{rank:7,code:"SE",name:"Sweden",gold:6,silver:6,bronze:4,total:16},
-{rank:8,code:"CH",name:"Switzerland",gold:6,silver:5,bronze:4,total:15},
-{rank:9,code:"AT",name:"Austria",gold:5,silver:8,bronze:5,total:18},
-{rank:10,code:"JP",name:"Japan",gold:5,silver:7,bronze:12,total:24},
-{rank:11,code:"CA",name:"Canada",gold:4,silver:5,bronze:6,total:15},
-{rank:12,code:"CN",name:"China",gold:3,silver:3,bronze:4,total:10},
-{rank:13,code:"AU",name:"Australia",gold:3,silver:2,bronze:1,total:6},
-{rank:14,code:"GB",name:"Great Britain",gold:3,silver:0,bronze:0,total:3},
-{rank:15,code:"KR",name:"South Korea",gold:2,silver:2,bronze:3,total:7},
-{rank:16,code:"CZ",name:"Czechia",gold:2,silver:2,bronze:0,total:4},
-{rank:17,code:"SI",name:"Slovenia",gold:2,silver:1,bronze:1,total:4},
-{rank:18,code:"ES",name:"Spain",gold:1,silver:0,bronze:1,total:2},
-{rank:19,code:"BR",name:"Brazil",gold:1,silver:0,bronze:0,total:1},
-{rank:20,code:"KZ",name:"Kazakhstan",gold:1,silver:0,bronze:0,total:1},
-{rank:21,code:"PL",name:"Poland",gold:0,silver:3,bronze:1,total:4},
-{rank:22,code:"NZ",name:"New Zealand",gold:0,silver:2,bronze:1,total:3},
-{rank:23,code:"FI",name:"Finland",gold:0,silver:1,bronze:4,total:5},
 ];
 
-const SC={"Alpine Skiing":"#2563eb",Biathlon:"#059669",Bobsleigh:"#92400e","Cross-Country Skiing":"#0284c7",Curling:"#7c3aed","Figure Skating":"#db2777","Freestyle Skiing":"#ea580c","Ice Hockey":"#dc2626",Luge:"#a16207","Nordic Combined":"#0e7490","Short Track Speed Skating":"#4f46e5",Skeleton:"#57534e","Ski Jumping":"#0d9488","Ski Mountaineering":"#16a34a",Snowboard:"#d97706","Speed Skating":"#1d4ed8",Ceremonies:"#b45309"};
+const SC={"Para Alpine Skiing":"#2563eb","Para Biathlon":"#059669","Para Cross-Country Skiing":"#0284c7","Para Ice Hockey":"#dc2626","Para Snowboard":"#d97706","Wheelchair Curling":"#7c3aed",Ceremonies:"#b45309"};
 
 const fd = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
 const fdl = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
@@ -498,7 +384,7 @@ function App() {
     x.fillStyle="#d0d074";x.font="bold 90px system-ui";x.fillText(subtitleText,PAD,145);
     // Branding right
     x.fillStyle="rgba(255,255,255,0.85)";x.font="bold 36px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,55);
-    x.fillStyle="rgba(208,208,116,0.7)";x.font="300 20px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,82);
+    x.fillStyle="rgba(208,208,116,0.7)";x.font="300 20px system-ui";x.fillText("PARALYMPIC WINTER GAMES 2026",W-PAD,82);
     // Part badge top-right if slideInfo provided
     if(slideInfo){
       x.font="bold 18px system-ui";
@@ -538,7 +424,7 @@ function App() {
       drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
     });
     // Footer
-    x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,1440-18);x.textAlign="left";
+    x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.PARALYMPIC.ORG",W/2,1440-18);x.textAlign="left";
     try{c.toBlob(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`olympic-${exportDate}-slide${clampedSlide+1}.png`;a.click();URL.revokeObjectURL(u);setExporting(false);},"image/png");}catch(e){setExporting(false);alert("Export failed — try right-clicking the preview.");}
   },[exportDate,slideEvents,clampedSlide,totalSlides,allDayEvents,resW,resH]);
 
@@ -560,7 +446,7 @@ function App() {
     x.fillStyle="rgba(255,255,255,0.5)";x.font="bold 22px system-ui";x.fillText("MEDAL COUNT",PAD,38);
     x.fillStyle="#d0d074";x.font="bold 50px system-ui";x.fillText(`Top ${n} Standings`,PAD,90);
     x.fillStyle="rgba(255,255,255,0.7)";x.font="bold 20px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,40);
-    x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
+    x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("PARALYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
     // Divider
     const divY=108;
     x.strokeStyle="rgba(208,208,116,0.3)";x.lineWidth=2;x.beginPath();x.moveTo(PAD,divY);x.lineTo(W-PAD,divY);x.stroke();
@@ -610,7 +496,7 @@ function App() {
       x.fillStyle="#fff";x.font=`bold ${tF}px system-ui`;x.fillText(String(s.total),cTotal,cy);
       x.textAlign="left";
     });
-    x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.olympics.com",W/2,H-16);
+    x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.paralympic.org",W/2,H-16);
     try{c.toBlob(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`olympic-medal-standings-top${medalRows}.png`;a.click();URL.revokeObjectURL(u);setExporting(false);},"image/png");}catch(e){setExporting(false);alert("Export failed — try right-clicking the preview.");}
   },[medalRows,resW,resH]);
 
@@ -646,7 +532,7 @@ function App() {
         const col=i%cols,row=Math.floor(i/cols);
         drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
       });
-      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,1440-18);x.textAlign="left";
+      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.PARALYMPIC.ORG",W/2,1440-18);x.textAlign="left";
       const blob=await new Promise(res=>c.toBlob(res,"image/png"));
       zip.file(`olympic-${exportDate}-slide${si+1}.png`,blob);
     }
@@ -695,7 +581,7 @@ function App() {
         const col=i%cols,row=Math.floor(i/cols);
         drawTile(x,ev,ox+col*(tw+GAP),oy+row*(th+GAP),tw,th,s);
       });
-      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.OLYMPICS.COM",W/2,H-18);x.textAlign="left";
+      x.fillStyle="rgba(255,255,255,0.25)";x.font="bold 18px system-ui";x.textAlign="center";x.fillText("MILANOCORTINA2026.PARALYMPIC.ORG",W/2,H-18);x.textAlign="left";
     } else if(slideIndex < tvScheduleSlideCount + tvMedalSlideCount) {
       // MEDAL SLIDE
       const data=sortedMedals.slice(0,Math.min(sortedMedals.length,tvMedalCount));
@@ -707,7 +593,7 @@ function App() {
       x.fillStyle="rgba(255,255,255,0.5)";x.font="bold 22px system-ui";x.fillText("MEDAL COUNT",PAD,38);
       x.fillStyle="#d0d074";x.font="bold 50px system-ui";x.fillText(`Top ${n} Standings`,PAD,90);
       x.fillStyle="rgba(255,255,255,0.7)";x.font="bold 20px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,40);
-      x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("OLYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
+      x.fillStyle="#d0d074";x.font="bold 13px system-ui";x.fillText("PARALYMPIC WINTER GAMES 2026",W-PAD,60);x.textAlign="left";
       const divY=108;
       x.strokeStyle="rgba(208,208,116,0.3)";x.lineWidth=2;x.beginPath();x.moveTo(PAD,divY);x.lineTo(W-PAD,divY);x.stroke();
       const bodyTop=divY+12;
@@ -743,7 +629,7 @@ function App() {
         x.fillStyle="#fff";x.font=`bold ${tF}px system-ui`;x.fillText(String(s.total),cTotal,cy);
         x.textAlign="left";
       });
-      x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.olympics.com",W/2,H-16);
+      x.fillStyle="rgba(255,255,255,0.2)";x.font="12px system-ui";x.textAlign="center";x.fillText("milanocortina2026.paralympic.org",W/2,H-16);
     } else {
       // CUSTOM SLIDE — draw baked-in image
       const ci = slideIndex - tvScheduleSlideCount - tvMedalSlideCount;
@@ -906,7 +792,7 @@ function App() {
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontSize:28}}>{"\u2744\uFE0F"}</span>
             <div><div style={{fontSize:20,fontWeight:900}}>MILANO CORTINA 2026</div>
-            <div style={{fontSize:11,color:"#d0d074",fontWeight:700,letterSpacing:"0.12em"}}>OLYMPIC WINTER GAMES &bull; {AE.length} SESSIONS</div></div>
+            <div style={{fontSize:11,color:"#d0d074",fontWeight:700,letterSpacing:"0.12em"}}>PARALYMPIC WINTER GAMES &bull; {AE.length} SESSIONS</div></div>
           </div>
           <div style={{display:"flex",gap:3,background:"rgba(255,255,255,0.1)",borderRadius:10,padding:3}}>
             <button onClick={()=>setView("tv")} style={ts(view==="tv")}>{"\u{1F4FA}"} TV Mode</button>
@@ -1100,7 +986,7 @@ function App() {
                 <div style={{fontSize:"clamp(8px,1vw,13px)",fontWeight:600,opacity:0.5,textTransform:"uppercase",letterSpacing:"0.1em"}}>{exportType==="schedule"?"Daily Summary":"Medal Count"}</div>
                 <div style={{fontSize:"clamp(14px,2.4vw,28px)",fontWeight:800,color:"#d0d074"}}>{exportType==="schedule"?fdl(exportDate):`Top ${medalRows} Standings`}</div>
               </div>
-              <div style={{textAlign:"right"}}><div style={{fontSize:"clamp(8px,1vw,13px)",fontWeight:800,letterSpacing:"0.12em",opacity:0.7}}>MILANO CORTINA</div><div style={{fontSize:"clamp(7px,0.7vw,10px)",color:"#d0d074",fontWeight:600}}>OLYMPIC WINTER GAMES 2026</div></div>
+              <div style={{textAlign:"right"}}><div style={{fontSize:"clamp(8px,1vw,13px)",fontWeight:800,letterSpacing:"0.12em",opacity:0.7}}>MILANO CORTINA</div><div style={{fontSize:"clamp(7px,0.7vw,10px)",color:"#d0d074",fontWeight:600}}>PARALYMPIC WINTER GAMES 2026</div></div>
             </div>
             {exportType==="schedule"&&(()=>{
               const n=slideEvents.length;
@@ -1158,7 +1044,7 @@ function App() {
                 </div>
               );
             })()}
-            <div style={{position:"absolute",bottom:"1.5%",left:0,right:0,textAlign:"center",fontSize:"clamp(6px,0.6vw,10px)",color:"rgba(255,255,255,0.2)",letterSpacing:"0.12em",fontWeight:600}}>milanocortina2026.olympics.com</div>
+            <div style={{position:"absolute",bottom:"1.5%",left:0,right:0,textAlign:"center",fontSize:"clamp(6px,0.6vw,10px)",color:"rgba(255,255,255,0.2)",letterSpacing:"0.12em",fontWeight:600}}>milanocortina2026.paralympic.org</div>
           </div>
         </div>)}
       </div>
