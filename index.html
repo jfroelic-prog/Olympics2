@@ -103,8 +103,12 @@ ev(8,"12:05","Para Ice Hockey","Preliminary Round - Game 3",V.ih,PIH),
 ev(8,"16:05","Para Ice Hockey","Preliminary Round - Game 4",V.ih,PIH),
 /* ═══ Mar 9 — Day 3 ═══ */
 ev(9,"09:30","Para Alpine Skiing","Women's Super-G - VI",V.al,PA,true),
-ev(9,"11:00","Para Alpine Skiing","Men's Super-G - Sitting",V.al,PA,true),
-ev(9,"12:30","Para Alpine Skiing","Men's Super-G - Standing",V.al,PA,true),
+ev(9,"10:15","Para Alpine Skiing","Women's Super-G - Standing",V.al,PA,true),
+ev(9,"11:00","Para Alpine Skiing","Women's Super-G - Sitting",V.al,PA,true),
+ev(9,"11:45","Para Alpine Skiing","Men's Super-G - VI",V.al,PA,true),
+ev(9,"12:30","Para Alpine Skiing","Men's Super-G - Sitting",V.al,PA,true),
+ev(9,"13:15","Para Alpine Skiing","Men's Super-G - Standing",V.al,PA,true),
+ev(9,"09:35","Wheelchair Curling","Mixed Doubles Round Robin Session 6",V.cu,WCT),
 ev(9,"09:35","Wheelchair Curling","Mixed Team Round Robin Session 5",V.cu,WCT),
 ev(9,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 6",V.cu,WCT),
 ev(9,"12:05","Para Ice Hockey","Preliminary Round - Game 5",V.ih,PIH),
@@ -187,8 +191,26 @@ ev(15,"13:15","Para Cross-Country Skiing","Men's 20km Free - VI",V.xc,PX,true),
 ev(15,"16:05","Para Ice Hockey","Gold Medal Game",V.ih,PIH,true),
 ev(15,"19:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
 ];
-// ========== MEDAL STANDINGS (empty until games begin Mar 7) ==========
+// ========== MEDAL STANDINGS (23 of 79 events, Mar 9 morning) ==========
 const MS=[
+{rank:1,code:"CN",name:"China",gold:8,silver:5,bronze:3,total:16},
+{rank:2,code:"UA",name:"Ukraine",gold:3,silver:2,bronze:5,total:10},
+{rank:3,code:"IT",name:"Italy",gold:2,silver:1,bronze:1,total:4},
+{rank:4,code:"AT",name:"Austria",gold:2,silver:1,bronze:0,total:3},
+{rank:5,code:"CA",name:"Canada",gold:1,silver:3,bronze:2,total:6},
+{rank:6,code:"US",name:"United States",gold:1,silver:3,bronze:1,total:5},
+{rank:7,code:"FR",name:"France",gold:1,silver:2,bronze:0,total:3},
+{rank:8,code:"DE",name:"Germany",gold:1,silver:1,bronze:5,total:7},
+{rank:9,code:"KR",name:"South Korea",gold:1,silver:0,bronze:1,total:2},
+{rank:10,code:"CH",name:"Switzerland",gold:1,silver:0,bronze:1,total:2},
+{rank:11,code:"NO",name:"Norway",gold:1,silver:0,bronze:0,total:1},
+{rank:12,code:"SE",name:"Sweden",gold:1,silver:0,bronze:0,total:1},
+{rank:13,code:"CZ",name:"Czechia",gold:0,silver:2,bronze:0,total:2},
+{rank:14,code:"AU",name:"Australia",gold:0,silver:1,bronze:0,total:1},
+{rank:15,code:"ES",name:"Spain",gold:0,silver:1,bronze:0,total:1},
+{rank:16,code:"NL",name:"Netherlands",gold:0,silver:1,bronze:0,total:1},
+{rank:17,code:"RU",name:"Russia",gold:0,silver:0,bronze:2,total:2},
+{rank:18,code:"SK",name:"Slovakia",gold:0,silver:0,bronze:2,total:2},
 ];
 
 const SC={"Para Alpine Skiing":"#2563eb","Para Biathlon":"#059669","Para Cross-Country Skiing":"#0284c7","Para Ice Hockey":"#dc2626","Para Snowboard":"#d97706","Wheelchair Curling":"#7c3aed",Ceremonies:"#b45309"};
@@ -382,6 +404,8 @@ function App() {
     x.fillStyle="#d0d074";x.font="italic bold 42px system-ui";x.fillText(titleText,PAD,55);
     // Date — huge bold
     x.fillStyle="#d0d074";x.font="bold 90px system-ui";x.fillText(subtitleText,PAD,145);
+    // PARALYMPICS — large centered
+    x.fillStyle="rgba(208,208,116,0.9)";x.font="bold 90px system-ui";x.textAlign="center";x.fillText("\u2744\uFE0F PARALYMPICS \u2744\uFE0F",W/2,145);x.textAlign="left";
     // Branding right
     x.fillStyle="rgba(255,255,255,0.85)";x.font="bold 36px system-ui";x.textAlign="right";x.fillText("MILANO CORTINA",W-PAD,55);
     x.fillStyle="rgba(208,208,116,0.7)";x.font="300 20px system-ui";x.fillText("PARALYMPIC WINTER GAMES 2026",W-PAD,82);
@@ -792,7 +816,7 @@ function App() {
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontSize:28}}>{"\u2744\uFE0F"}</span>
             <div><div style={{fontSize:20,fontWeight:900}}>MILANO CORTINA 2026</div>
-            <div style={{fontSize:11,color:"#d0d074",fontWeight:700,letterSpacing:"0.12em"}}>PARALYMPIC WINTER GAMES &bull; {AE.length} SESSIONS</div></div>
+            <div style={{fontSize:18,color:"#d0d074",fontWeight:800,letterSpacing:"0.08em"}}>PARALYMPICS</div></div>
           </div>
           <div style={{display:"flex",gap:3,background:"rgba(255,255,255,0.1)",borderRadius:10,padding:3}}>
             <button onClick={()=>setView("tv")} style={ts(view==="tv")}>{"\u{1F4FA}"} TV Mode</button>
