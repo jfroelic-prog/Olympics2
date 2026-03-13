@@ -155,22 +155,27 @@ ev(12,"14:05","Wheelchair Curling","Mixed Team Round Robin Session 11",V.cu,WCT)
 ev(12,"12:05","Para Ice Hockey","Classification: Slovakia vs Germany",V.ih,PIH),
 ev(12,"16:05","Para Ice Hockey","Classification: Italy vs Japan",V.ih,PIH),
 /* ═══ Mar 13 — Day 7 ═══ */
-ev(13,"09:30","Para Alpine Skiing","Women's Giant Slalom Run 1 - VI",V.al,PA),
-ev(13,"12:00","Para Alpine Skiing","Women's Giant Slalom Run 2 - VI",V.al,PA,true),
-ev(13,"09:30","Para Alpine Skiing","Men's Giant Slalom Run 1 - Sitting",V.al,PA),
-ev(13,"12:00","Para Alpine Skiing","Men's Giant Slalom Run 2 - Sitting",V.al,PA,true),
-ev(13,"10:00","Para Biathlon","Women's Sprint Pursuit Qual.",V.bi,PB),
+ev(13,"08:00","Para Alpine Skiing","Men's Giant Slalom Run 1 - VI",V.al,PA),
+ev(13,"08:00","Para Alpine Skiing","Men's Giant Slalom Run 1 - Standing",V.al,PA),
+ev(13,"08:00","Para Alpine Skiing","Men's Giant Slalom Run 1 - Sitting",V.al,PA),
+ev(13,"12:00","Para Alpine Skiing","Men's Giant Slalom Run 2 - All Categories",V.al,PA,true),
+ev(13,"08:00","Para Snowboard","Women's Banked Slalom - SB-LL2",V.sb,PSB,true),
+ev(13,"08:00","Para Snowboard","Men's Banked Slalom - SB-UL",V.sb,PSB,true),
+ev(13,"08:00","Para Snowboard","Men's Banked Slalom - SB-LL1",V.sb,PSB,true),
+ev(13,"08:00","Para Snowboard","Men's Banked Slalom - SB-LL2",V.sb,PSB,true),
+ev(13,"08:45","Para Biathlon","Women's Sprint Pursuit Qual.",V.bi,PB),
+ev(13,"09:00","Para Biathlon","Men's Sprint Pursuit Qual.",V.bi,PB),
 ev(13,"12:30","Para Biathlon","Women's Sprint Pursuit - Sitting",V.bi,PB,true),
 ev(13,"13:30","Para Biathlon","Women's Sprint Pursuit - Standing",V.bi,PB,true),
 ev(13,"14:30","Para Biathlon","Women's Sprint Pursuit - VI",V.bi,PB,true),
-ev(13,"10:00","Para Biathlon","Men's Sprint Pursuit Qual.",V.bi,PB),
 ev(13,"12:30","Para Biathlon","Men's Sprint Pursuit - Sitting",V.bi,PB,true),
 ev(13,"13:30","Para Biathlon","Men's Sprint Pursuit - Standing",V.bi,PB,true),
 ev(13,"14:30","Para Biathlon","Men's Sprint Pursuit - VI",V.bi,PB,true),
-ev(13,"10:00","Wheelchair Curling","Mixed Team Semifinals",V.cu,WCT),
+ev(13,"09:05","Wheelchair Curling","Mixed Team Semi: South Korea vs Canada",V.cu,["KR","CA"]),
+ev(13,"09:05","Wheelchair Curling","Mixed Team Semi: China vs Sweden",V.cu,["CN","SE"]),
 ev(13,"18:30","Wheelchair Curling","Mixed Team Bronze Medal Game",V.cu,WCT,true),
-ev(13,"12:05","Para Ice Hockey","Semifinals - Game 1",V.ih,PIH),
-ev(13,"16:05","Para Ice Hockey","Semifinals - Game 2",V.ih,PIH),
+ev(13,"09:35","Para Ice Hockey","Semifinal: USA vs Czechia",V.ih,["US","CZ"]),
+ev(13,"14:05","Para Ice Hockey","Semifinal: Canada vs China",V.ih,["CA","CN"]),
 /* ═══ Mar 14 — Day 8 ═══ */
 ev(14,"09:30","Para Alpine Skiing","Women's Giant Slalom Run 1 - Sitting",V.al,PA),
 ev(14,"12:00","Para Alpine Skiing","Women's Giant Slalom Run 2 - Sitting",V.al,PA,true),
@@ -194,23 +199,23 @@ ev(15,"13:15","Para Cross-Country Skiing","Men's 20km Free - VI",V.xc,PX,true),
 ev(15,"16:05","Para Ice Hockey","Gold Medal Game",V.ih,PIH,true),
 ev(15,"19:00","Ceremonies","Closing Ceremony",V.cc,["IT"]),
 ];
-// ========== MEDAL STANDINGS (Mar 12) ==========
+// ========== MEDAL STANDINGS (Mar 13 morning) ==========
 const MS=[
-{rank:1,code:"CN",name:"China",gold:10,silver:7,bronze:10,total:27},
-{rank:2,code:"US",name:"United States",gold:6,silver:5,bronze:3,total:14},
-{rank:3,code:"AT",name:"Austria",gold:5,silver:1,bronze:4,total:10},
-{rank:4,code:"RU",name:"Russia",gold:4,silver:1,bronze:2,total:7},
-{rank:5,code:"IT",name:"Italy",gold:3,silver:6,bronze:1,total:10},
-{rank:6,code:"FR",name:"France",gold:3,silver:4,bronze:3,total:10},
-{rank:7,code:"UA",name:"Ukraine",gold:3,silver:2,bronze:5,total:10},
+{rank:1,code:"CN",name:"China",gold:10,silver:8,bronze:12,total:30},
+{rank:2,code:"US",name:"United States",gold:9,silver:5,bronze:5,total:19},
+{rank:3,code:"IT",name:"Italy",gold:5,silver:6,bronze:1,total:12},
+{rank:4,code:"AT",name:"Austria",gold:5,silver:1,bronze:4,total:10},
+{rank:5,code:"RU",name:"Russia",gold:4,silver:1,bronze:2,total:7},
+{rank:6,code:"UA",name:"Ukraine",gold:3,silver:4,bronze:6,total:13},
+{rank:7,code:"FR",name:"France",gold:3,silver:4,bronze:3,total:10},
 {rank:8,code:"SE",name:"Sweden",gold:3,silver:0,bronze:3,total:6},
-{rank:9,code:"DE",name:"Germany",gold:2,silver:4,bronze:6,total:12},
-{rank:10,code:"NO",name:"Norway",gold:2,silver:2,bronze:0,total:4},
-{rank:11,code:"NL",name:"Netherlands",gold:2,silver:1,bronze:1,total:4},
-{rank:12,code:"ES",name:"Spain",gold:2,silver:1,bronze:0,total:3},
-{rank:13,code:"CH",name:"Switzerland",gold:2,silver:0,bronze:1,total:3},
-{rank:14,code:"CA",name:"Canada",gold:1,silver:3,bronze:6,total:10},
-{rank:15,code:"KR",name:"South Korea",gold:1,silver:3,bronze:1,total:5},
+{rank:9,code:"DE",name:"Germany",gold:2,silver:4,bronze:7,total:13},
+{rank:10,code:"CA",name:"Canada",gold:2,silver:3,bronze:6,total:11},
+{rank:11,code:"NL",name:"Netherlands",gold:2,silver:1,bronze:1,total:5},  // Updated: was missing bronze update
+{rank:12,code:"NO",name:"Norway",gold:2,silver:2,bronze:0,total:4},
+{rank:13,code:"CH",name:"Switzerland",gold:2,silver:1,bronze:1,total:4},
+{rank:14,code:"ES",name:"Spain",gold:2,silver:1,bronze:0,total:3},
+{rank:15,code:"KR",name:"South Korea",gold:1,silver:4,bronze:1,total:6},
 ];
 
 const SC={"Para Alpine Skiing":"#2563eb","Para Biathlon":"#059669","Para Cross-Country Skiing":"#0284c7","Para Ice Hockey":"#dc2626","Para Snowboard":"#d97706","Wheelchair Curling":"#7c3aed",Ceremonies:"#b45309"};
@@ -334,8 +339,8 @@ function App() {
     const lx=tx+px, rx=tx+tw-px;
     const usableW=tw-px*2;
 
-    // ── Sport emoji — 18% of tile height ──
-    const emojiFs=Math.round(th*0.18);
+    // ── Sport emoji — 12% of tile height (scaled down) ──
+    const emojiFs=Math.round(th*0.12);
     x.save();x.globalAlpha=1.0;x.fillStyle="#fff";x.font=`${emojiFs}px system-ui`;
     x.fillText(ge(ev.sport),lx,ty+py+emojiFs*0.95);x.restore();
 
@@ -1025,7 +1030,7 @@ function App() {
                         <div style={{position:"absolute",left:0,top:"4%",bottom:"4%",width:Math.max(3,4*tScale),background:"rgba(208,208,116,0.5)",borderRadius:"0 4px 4px 0"}} />
                         {e.isMedal&&<span style={{position:"absolute",top:`${2*tScale}%`,right:`${2*tScale}%`,fontSize:`${12*tScale}px`}}>{"\u{1F3C5}"}</span>}
                         <div style={{display:"flex",alignItems:"center",gap:`${3*tScale}%`,paddingLeft:`${2*tScale}%`}}>
-                          <span style={{fontSize:`${24*tScale}px`,lineHeight:1}}>{ge(e.sport)}</span>
+                          <span style={{fontSize:`${16*tScale}px`,lineHeight:1}}>{ge(e.sport)}</span>
                           <div style={{flex:1,minWidth:0}}>
                             <div style={{fontSize:`${9*tScale}px`,fontWeight:700,color:"rgba(208,208,116,0.9)",textTransform:"uppercase",letterSpacing:"0.06em"}}>{e.sport}</div>
                             <div style={{fontSize:`${14*tScale}px`,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:tScale<1?"nowrap":"normal",lineHeight:1.25}}>{e.title}</div>
